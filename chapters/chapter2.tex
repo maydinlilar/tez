@@ -2,63 +2,156 @@
 \label{chp:b2}
 
 \section{Image Similarity}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sodales augue sit amet eros maximus, sed venenatis metus vehicula. Proin vel ligula porta justo iaculis ultrices non a ex. Sed lacinia bibendum feugiat. Integer mollis ac quam eu malesuada. Pellentesque malesuada facilisis metus quis condimentum. Nulla eget odio eget arcu elementum fringilla. Vestibulum eget pretium libero. Ut fermentum eleifend enim, nec facilisis sapien iaculis eu. Curabitur volutpat turpis risus, sed sollicitudin velit imperdiet sit amet.
+%paper_start
+Traditionally, image similarity is measured by measuring the distance between hand crafted features extracted from each image. These hand crafted features include simple descriptors such as color/luminance histograms, or improved ideas, including histogram of oriented gradients [7], GIST [39], SIFT [29], SURF [4]. These features are compared using several types of distance metrics. Recently, deep convolutional neural networks (DCNNs) became the state of art for image classification.
 
-Aliquam tristique dictum facilisis. Aliquam non erat sed ligula lobortis varius id eu est. Suspendisse dapibus auctor diam ut ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum leo lectus, ornare ac lectus eget, placerat ultrices nulla. Praesent sit amet sodales nibh. Sed vestibulum non lorem non scelerisque. 
+Starting with AlexNet [26] and followed by deeper networks such as VGG [53], GoogLeNet[55], and ResNet [21], DCNNs started to perform near human level success for image classification. Their success lead to use feature vectors that have been obtained from DCNNs for image retrieval [58, 19]. Unlike previous approaches that are based on hand-crafted features, DCNNs learn the feature vector itself directly from the image. One major drawback of using DCNNs is the need for using very large labeled datasets for training, which is difficult to obtain or not available at all for most problem domains.
 
+Transfer learning [61] aims to solve this problem by using pre-trained networks on large scale datasets such as ImageNet [48]. The basic method is to give the images to the pre-trained network and use the output of the last fully connected layers as feature vectors [9, 58] – an approach that we also adopt in our work.
+
+Visual similarity is a perceptual phenomenon without ground-truth data. This makes collecting data using crowdsourcing experiments valuable. Indeed, there are several crowdsourcing-based works [30, 49, 24] that address shape or style similarity problems and conduct user experiments to either derive or validate models. Of most related to our work are two similarity studies that also employ subjective experiments [46, 38]. In the first study, human participants are asked to judge image similarity using two different experiments: one involving printouts of images (called table scaling) and the other using a computer based comparison (called computer scaling) [46]. These results are compared with computational similarity approaches [16] and simple CIELAB histograms. It was found that both table and computer scaling yield similar results and color is a major factor influencing similarity for human observers. In the second study, user experiments are conducted to evaluate the relationship between an image indexing system and perceived similarity in an LDR setting [38]. The tested image indexing system is based on basic properties of early stages of human vision - chromaticity, luminance, and texture. Two-alternative forced-choice (2AFC) method is used for all experiments. Three images are shown to the observer, the query image and two test images. Of these two images one image is called the target and the other the distractor. These images are selected based on the rankings obtained from the image-indexing system. Then the correlation between the users’ preference and index rank is investigated. First, each index, chromaticity, luminance, and texture are calculated separately. From these indexes chromaticity is found to give the best results. Then for the second experiment, combinations of the indexes are evaluated. The combination of chromaticity and texture indices are found to give better results than chromaticity alone and the combination of all indices are found to give the best result.
+%paper_end
 \section{HDR Imaging}
+The need for HDR imaging was realized for the first time in computer graphics to deal with the requirements of physically accurate lighting simulation systems [18]. Such systems produced numerically unbounded pixel values, necessitating their storage in HDR file formats [27]. HDR images have typically been termed as “scene-referred” as opposed to “display-referred” – a term used for LDR images [45]. However, as display devices have traditionally been low dynamic range, displaying these images on LDR devices required an operation known as tone mapping [57, 59]. Numerous tone mapping operators (TMOs) have been developed in literature ranging from simple contrast adjustments to complex algorithms modeling the human visual system [15] and the properties of display devices [33]. Many methods have also been produced to create photographic HDR images of real-world scenes [8], including dynamic scenes [51,23].
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=.8\textwidth]{figures/bilim_agaci.jpg}
-\caption{Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis id metus risus. }
-\label{fig:sample}
-\end{figure}
+While HDR imaging has long been an active field of research, recent developments in HDR imaging [45, 3, 6], in particular those pertaining to HDR image and video capture [56, 17] and display systems [50] are likely to make HDR content more ubiquitous in the near future. However, despite the practical improvements in the field, there is also a need for fundamental and experimental research that explores various aspects related to HDR imaging and dynamic range. In this direction, Grimaldi et al. investigated how image statistics change as a function of dynamic range and found that there are indeed differences between HDR and LDR images [20]. The authors, also found, however, that the majority of these differences are accounted for by the early visual processing that takes place in the human visual system.
+
+As mentioned above, although visual image similarity is an extensively studied subject [28], to our knowledge there is no study that directly addresses this problem for HDR images. Thus, understanding the nature of image similarity for HDR images and developing an objective similarity measure is the primary goal of this paper. Secondly, we show how such a metric could be leveraged to solve an important tone mapping problem,
+which is how to tone map different HDR images such that they consistently follow a user-defined style.
+%paper_end
 
 \subsection{Tonemapping}
+
 \section{Features}
-\subsection{Color}
-\subsection{Texture}
-\subsection{Luminance}
-\subsection{GIST Features}
-\subsection{Deeply Learned Features}
-\section{Distance Metrics}
-\subsection{Euclidean Distance}
-\subsection{Bhattacharyya Distance}
-\subsection{Earth Mover’s Distance}
+%paper
+In this study, five kinds of features are used to model HDR images: color, luminance, texture, GIST, and DCNN features. Table \ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. The following sections outline the details of these features and the corresponding distance metrics.
 
-\begin{equation}
-{\bf y}_k = \phi_k ( {\bf X}) + {\bf x}_k 
-\label{eq:prn}
-\end{equation}
-
-
-\begin{equation}
-{\bf y}_k = {\bf x}_k * {\bf P}_k
-\end{equation}
-
-
-\begin{table}[h]
-\caption{Results}
-\label{table:test}
-\resizebox{\textwidth}{!}{\begin{tabular}{||c c c c||} 
- \hline
- Col1 & Col2 & Col2 & Col3 \\ [0.5ex] 
- \hline\hline
- 1 & 6 & 87837 & 787 \\ 
- \hline
- 2 & 7 & 78 & 5415 \\
- \hline
- 3 & 545 & 778 & 7507 \\
- \hline
- 4 & 545 & 18744 & 7560 \\
- \hline
- 5 & 88 & 788 & 6344 \\ [1ex] 
- \hline
-\end{tabular}}
-
+\begin{table}[h!]
+\caption{HDR Image features and distances}
+\centering
+\begin{tabular}{c|c|c}
+\label{tab:table_feature}
+\textbf{Feature} & \textbf{Model} & \textbf{Distance Metric}\\
+\hline
+Color  & 2D chromaticity histogram & Earth Mover's Distance (EMD) \\
+Luminance  & 1D (relative) luminance histogram & EMD \\
+Texture  & Histograms of gradients & EMD \\
+GIST  & Feature vector & Cosine distance \\
+VGG16/VGG19 - fc6 & Fused fc6 layer & Cosine distance  \\
+VGG16/VGG19 - fc7 & Fused fc7 layer & Cosine distance
+\end{tabular}
 \end{table}
 
+%paper
+\subsection{Color}
+%paper
+Since the early days of the image similarity research, color has been used as one of the most discriminative
+cues [38]. In this study, we used the a and b channels of the CIELAB color space [22] to represent chromaticity information. This is an opponent color space, where the a channel represents red/green opponent colors and the b channel yellow/blue opponent colors. We used a 2D chromaticity histogram to represent the distribution of colors in a given image. Each dimension contained 15 bins for a total of 225 bins. Figure \ref{fig:hists} shows this histogram for the Mason Lake image from the dataset [12].
+
+\begin{figure}
+\centering
+\caption{Sample image (left), 2D histogram (right).}
+\label{fig:hists}
+\begin{tabular}{c c}
+\includegraphics[height=1.8in]{figures/chapter2/MasonLake.jpg} &
+\includegraphics[height=1.8in]{figures/chapter2/57_histab.png}
+
+\end{tabular}
+\end{figure}
+
+%paper
+\subsection{Texture}
+%paper
+Texture is the second most used feature for content based image retrieval systems after chromatic features. This feature is especially helpful for discriminating images that have similar color but different spatial characteristics such as blue sky and sea or sand and buildings.
+
+To represent the texture information we used histogram of gradient magnitudes [52].
+%paper
+\subsection{Luminance}
+%paper
+The main difference between an HDR and an LDR image is the much wider range of luminance distribution for the former. A single HDR image may contain very low luminances corresponding to highly shadowed regions as well as very high luminances corresponding to bright highlights. Therefore, we hypothesized that the luminance distribution of an HDR image may be an important cue for visual similarity. The luminance distribution is modeled using a 1D (relative) luminance histogram with 50 bins.
+%paper
+\subsection{GIST Features}
+%paper
+The GIST descriptor [39] aims to represent the dominant spatial structure of a scene by using low level multi-scale representations. This descriptor defines the scene as a whole rather than focusing on individual objects or regions. Discriminative properties of a scene are listed as naturalness, openness, roughness, expansion, and ruggedness. The class of a scene, e.g., man-made, natural, indoor, outdoor, etc., is determined by these properties.
+
+The procedure for extracting GIST descriptors consists of applying Gabor filters that are scaled and orientated differently to the input image, dividing the filter response map into a grid in order to have spatial information, averaging the filter response in each grid, and concatenating the results to obtain the final feature vector, i.e. the GIST descriptor.
+%paper
+\subsection{Deeply Learned Features}
+%paper
+Recently, DCNNs have started to dominate object recognition and image classification tasks, achieving near human success rates [26, 53, 63]. These models are trained with large prelabeled datasets and develop a hierarchical model that becomes more aware of the content of the image rather than the underlying pixel values.
+To our knowledge currently there is no DCNN model that is trained on HDR images for the purpose of image indexing, scene classification, or visual similarity tasks. Furthermore, there is no prelabeled large HDR image dataset to use for training a DCNN model from scratch. Therefore in this study, we used transfer learning method to employ pretrained DCNNs for our perceptual similarity problem.
+
+For feature extraction, pretrained AlexNet [26] and two variants of VGG networks, VGG16 and VGG19, are
+used [53]. All networks are trained on the ImageNet [48] dataset, but we also evaluated their performance when
+trained using different datasets. For transfer learning, the last fully connected layer, which contains classification outputs, is removed and the remaining 4096 dimensional two fully connected layers, fc6 and fc7, are used as feature vectors. As suggested by Simonyan and Zisserman [54], the results obtained from VGG16 and VGG19 are fused (by taking an average) and it is observed that the fused version performs better than both VGG16 and VGG19. The distance between the feature vectors are calculated using cosine distance, which is acommonly used distance metric for deep learning features.
+%paper
+\section{Distance Metrics}
+%paper
+The use of a proper distance metric is as important as the features themselves. Each feature representation
+may require a different distance metric. In this section, we briefly describe the definitions and properties of the dissimilarity measures that we used for different types of features.
+%paper
+\subsection{Euclidean Distance}
+%paper
+The Euclidean distance between two histograms p and q is calculated as:
+\begin{equation}
+dist_{euc}(p,q) = \sqrt{\sum_i(p_i-q_i)^2},
+\end{equation}
+where i is the bin index. In general, dissimilarity obtained by Euclidean distance for histograms is not satisfactory as it does not take bin proximity into account.
+%paper
+\subsection{Bhattacharyya Distance}
+%paper
+Bhattacharyya distance [5] measures the overlap between two distributions. If p and q are two histograms, it can be calculated as:
+\begin{equation}
+dist_{bhat}(p,q) = -\ln \left( \sum_i \sqrt{p_i.q_i} \right).
+\end{equation}
+
+For our HDR similarity problem Bhattacharyya distance gives slightly better results than Euclidean distance. However, it also suffers from the same problem that the proximity of the bins is not taken into account.
+%paper
+\subsection{Earth Mover’s Distance}
+%paper
+Earth Mover’s Distance (EMD) is a dissimilarity metric commonly used for image the retrieval problems [47]. EMD aims to capture the perceptual similarity between two distributions by calculating the minimal cost of transforming one distribution to the other. Unlike the other dissimilarity metrics, EMD can be calculated for varying-size partitions of the data, called signatures.
+Signatures consist of dominant clusters of the data, represented as $si = (m_i, w_i)$ pairs where mi is the cluster center and $w_i$ is the size of the cluster. EMD does not require the signatures to have the same number of clusters – ground distances between cluster centers are sufficient. Histograms are signatures with bin centers corresponding to cluster centers, mi, and normalized bin values to weights, $w_i$.
+
+The total amount of work to transform distribution
+p to q with flow f is:
+\begin{equation}
+WORK(P,Q,F) = \sum_i^m \sum_j^n d_{ij}f_{ij}, 
+\end{equation}
+where dij is the ground distance between cluster centers i and j. The optimal flow f that results with the minimum work, can be found by any linear optimization algorithm. When f is calculated, the EMD between p and q is defined as:
+\begin{equation}
+EMD(p,q) = {{\sum \sum d_{ij}f_{ij}}\over{\sum \sum f_{ij}}}.
+\end{equation}
+In our problem, bin centers correspond to color values
+(ab values in the CIELAB space) and ground distances
+are calculated as Euclidean because of the perceptual
+uniformity of the CIELAB color space.
+
+Figure \ref{fig:sim_comp} compares the effect of these three distance
+metrics for a sample image from the dataset. The image
+on the first column is the query image, and in each row,
+the most similar five images from the dataset are shown.
+The distance metric used in first row is Euclidean, the
+second row is Bhattacharyya, and the last row is the
+EMD. It can be argued that more similar images are
+found using the EMD metric.
+
+\begin{figure} 
+\centering
+\caption{A comparison of dissimilarity metrics for histogram-based features. The leftmost image is the query image, the most similar five images from the dataset are shown in each row: Euclidean distance (first row), Bhattacharyya distance (second row), Earth Mover’s distance (third row).}
+\label{fig:sim_comp}
+\includegraphics[width=\textwidth]{figures/chapter2/16sims.png}
+\vspace{10pt}
+\end{figure}
+
+%paper
+\subsection{Cosine Similarity}
+%paper
+Cosine distance between two vectors $p$ and $q$ is calculated as:
+\begin{equation}
+dist_{cosine}(p,q) = 1 - {{\sum_{i=1}^{n}p_{i}q_{i}} \over {\sqrt{\sum_{i=1}^{n}p_{i}^2}} \sqrt{\sum_{i=1}^{n}q_{i}^2}} 
+\end{equation}
+Cosine distance is a widely used distance metric for deep representations. In this study, we used cosine distance for calculating the distances between CNN feature vectors and GIST features.
+%paper
 
 
 

@@ -134,21 +134,37 @@
 % Abstract in English
 %
 \abstract{
- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sodales augue sit amet eros maximus, sed venenatis metus vehicula. Proin vel ligula porta justo iaculis ultrices non a ex. Sed lacinia bibendum feugiat. Integer mollis ac quam eu malesuada. Pellentesque malesuada facilisis metus quis condimentum. Nulla eget odio eget arcu elementum fringilla. Vestibulum eget pretium libero. Ut fermentum eleifend enim, nec facilisis sapien iaculis eu. Curabitur volutpat turpis risus, sed sollicitudin velit imperdiet sit amet.
-
-Aliquam tristique dictum facilisis. Aliquam non erat sed ligula lobortis varius id eu est. Suspendisse dapibus auctor diam ut ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum leo lectus, ornare ac lectus eget, placerat ultrices nulla. Praesent sit amet sodales nibh. Sed vestibulum non lorem non scelerisque.
-
-Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis id metus risus. Vestibulum tempor leo orci, non semper quam aliquet non. Nam vitae convallis dolor, lacinia mollis nunc. Vestibulum imperdiet ornare mauris eget blandit. Etiam venenatis mauris dictum urna convallis fringilla vitae non dui. Etiam sit amet venenatis turpis. Nulla facilisi. Etiam sed nulla pulvinar, ullamcorper mauris a, vulputate risus. Integer ligula nisi, porta sed dapibus ac, mattis at libero. Curabitur sodales lacus ac ante facilisis, ac condimentum ante suscipit. Proin aliquet mattis diam tempus fermentum. Phasellus quis congue ante, sed fringilla dui. 
+Assessing visual similarity for low dynamic range (LDR) images is an extensively studied
+problem. Promising results are obtained when an image database is queried to find the images
+containing a specific object of interest, a task known as exact matching. However, this problem
+becomes more difficult if one needs approximate similarity, which is the task of determining
+images that are merely visual similar to a query image. In this study, we aim to shed light on this
+problem with an experimental approach. To this end, we first collect crowd-sourcing data
+through a novel web-based experimental interface, in which the participants assess the visual
+similarity of HDR images. We then collect a large number of features to assess how well they
+correlate with the participants responses. We also include features computed by convolutional
+neural networks, which are also proven to be successful in standard similarity tasks. We
+compute the correlation of each feature with the crowdsourcing data, first in isolation, and then
+merging multiple features by using different weights for each feature determined through a
+metric learning approach. Based on the obtained results, we proposed a style-based tone
+mapping algorithm that can successfully impart a user-defined style to various HDR images
+determined to be similar with respect to our metric.
 }
 %
 % Turkish Abstract
 %
 \oz{
- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sodales augue sit amet eros maximus, sed venenatis metus vehicula. Proin vel ligula porta justo iaculis ultrices non a ex. Sed lacinia bibendum feugiat. Integer mollis ac quam eu malesuada. Pellentesque malesuada facilisis metus quis condimentum. Nulla eget odio eget arcu elementum fringilla. Vestibulum eget pretium libero. Ut fermentum eleifend enim, nec facilisis sapien iaculis eu. Curabitur volutpat turpis risus, sed sollicitudin velit imperdiet sit amet.\cite{paper1}
-
-Aliquam tristique dictum facilisis. Aliquam non erat sed ligula lobortis varius id eu est. Suspendisse dapibus auctor diam ut ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum leo lectus, ornare ac lectus eget, placerat ultrices nulla. Praesent sit amet sodales nibh. Sed vestibulum non lorem non scelerisque.
-
-Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis id metus risus. Vestibulum tempor leo orci, non semper quam aliquet non. Nam vitae convallis dolor, lacinia mollis nunc. Vestibulum imperdiet ornare mauris eget blandit. Etiam venenatis mauris dictum urna convallis fringilla vitae non dui. Etiam sit amet venenatis turpis. Nulla facilisi. Etiam sed nulla pulvinar, ullamcorper mauris a, vulputate risus. Integer ligula nisi, porta sed dapibus ac, mattis at libero. Curabitur sodales lacus ac ante facilisis, ac condimentum ante suscipit. Proin aliquet mattis diam tempus fermentum. Phasellus quis congue ante, sed fringilla dui.  
+Çok çeşitli amaçlarla kullanılmak üzere standard imgelerin benzerliğini belirleyen bir çok
+algoritma bulunmasına rağmen HDR imgeler için yapılmış çalışma sayısı oldukça azdır.
+Teknolojinin gelişmesiyle birlikte HDR imgelerin benzerliğinin objektif bir biçimde
+değerlendirilmesi önem kazanacaktır. Bu sebeple, imgelerin benzerliklerini ölçmede etkili
+olacağını düşündüğümüz, imgelerin alt ve orta seviye özelliklerini ve uzaklık metriklerini öne
+sürüyoruz. Yaptığımız kullanıcı deneyi ile subjektif benzerlik skorları elde edilmiştir ve önerilen
+özelliklerin bu skorlarla olan korelasyonu değerlendirilmiştir. Daha sonra, bu özelliklerin çeşitli
+ağırlıklarla oluşturulan kombinasyonunun her bir özellikle tek tek elde edilen sonuçlardan daha
+başarılı sonuç verdiği gözlenmiştir. Geliştirilen tekniğin bir uygulaması olarak HDR imgelerin
+standard imgelere dönüştürülmesi probleminde imgeler arası benzerliğin kullanılmasının etkisi
+gösterilmiştir. 
 } 
 %
 % Dedication 
@@ -156,11 +172,7 @@ Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netu
 %
 %
 % Acknowledgements   
-\acknowledgments{
- Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis id metus risus. Vestibulum tempor leo orci, non semper quam aliquet non. Nam vitae convallis dolor, lacinia mollis nunc. Vestibulum imperdiet ornare mauris eget blandit. Etiam venenatis mauris dictum urna convallis fringilla vitae non dui. Etiam sit amet venenatis turpis. Nulla facilisi. Etiam sed nulla pulvinar, ullamcorper mauris a, vulputate risus. Integer ligula nisi, porta sed dapibus ac, mattis at libero. Curabitur sodales lacus ac ante facilisis, ac condimentum ante suscipit. Proin aliquet mattis diam tempus fermentum. Phasellus quis congue ante, sed fringilla dui.\cite{paper2}
-
-Nullam porta arcu id ultricies consequat. Suspendisse potenti. Morbi vel iaculis diam, semper mollis mi. Integer enim est, viverra et orci nec, porttitor euismod turpis. Curabitur non magna ut nisl mollis rutrum. Curabitur nulla libero, aliquam a magna sed, ullamcorper auctor orci. Donec lectus enim, mattis non est in, elementum fringilla nisi. Aenean imperdiet finibus turpis non mollis. Sed vulputate nisi nec leo blandit bibendum. Donec luctus augue facilisis, aliquam augue iaculis, fringilla ante. Praesent eget sem hendrerit odio tempor vulputate. Nam ac semper enim. Ut at massa sem. Nam at nulla fringilla mi commodo vulputate. 
-}
+\acknowledgments{}
 
 %
 % End of Personal and Introductory  Information

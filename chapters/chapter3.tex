@@ -2,20 +2,58 @@
 \label{chp:b3}
 
 \section{Dataset}
+%paper
+The set of images used in visual similarity experiments should be sufficiently diverse. Although such datasets exists for LDR images, there is no specific similarity dataset for HDR images. However, there exists HDR image datasets that were created for various purposes and by different authors. We therefore decided to select 100 HDR images from various such sources to present observers with a diverse set of images2. The used datasets were: Fairchild’s HDR Photographic Survey [12], HDR-Eye [37], DEIMOS [25], Empa HDR Image Database [1], and pfstools HDR Image Gallery [32]. Thumbnails for the used images are shown in Figure \ref{fig:dataset}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/chapter3/dataset.png}
+\caption{HDR images used in the visual similarity experiments.
+%paper
+}
+\label{fig:dataset}
+\end{center}
+\end{figure}
+%paper
 \section{Experiment Setting}
+%paper
+To measure perceptual similarity between HDR images, we conducted a 2AFC experiment. The experiment is publicly available\footnote{http://user.ceng.metu.edu.tr/~merve/userstudy/}. As we needed a large number of responses, we designed a web-based interface to collect crowdsourcing data. We used the HDRHTML technique [34] for visualizing HDR images on web browsers. This technique uses a windowing approach to select a desired exposure range from the HDR image, which is indicated by a slider set by the user. By dynamically adjusting the position of the slider, the user can efficiently view the entire exposure range contained within the HDR image. These sliders are normally overlayed with the image histogram. We removed this overlay to prevent the image histogram from affecting the observers’ decisions. Figure \ref{fig:experiment} shows a sample trial from the experiment. An HDR reference image was shown at the top and two HDR test images were shown at the bottom. The sliders, which were mandatory to be adjusted, allowed all images to be inspected at different exposure levels.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/chapter3/experiment.png}
+\caption{EA sample trial from the experiment. The observers were asked to choose the most similar image to the reference image (top) from the test images (bottom). All images could be examined at different exposure levels by adjusting their sliders.
+%paper
+}
+\label{fig:experiment}
+\end{center}
+\end{figure}
+
+In each experimental session, 33 such image triplets were displayed to the observers. Thus, an experimental session consisted of 33 trials. In each trial, the observers were asked to choose which of the two test images was visually more similar to the reference image. Here it is important to note that we did not ask users
+to decide for a specific type of similarity such as object, color, etc. By intentionally leaving the definition of visual similarity vague, we hoped to achieve a range of responses, which in overall, would converge to a common sense understanding for similarity. All trials, except for the verification ones, were generated randomly from the dataset during the runtime of the experiment. Three of these triplets were used for verification. They contained an obviously similar reference and test image pair to evaluate the reliability of an observer. If an observer failed to provide the correct answer even for one of these trials, his or her data was discarded as being unreliable. These trials were distributed evenly across the experiment to ensure that observers were attentive throughout. Before the experiment began, observers were informed about their task and the expected duration of the experiment, which was at most 20 minutes at a normal pace. During the experiment, observers were required to use the exposure sliders for each image before they made selection. Image selection was done by clicking on one of the test images. The selection was indicated using a green border around the selected image. Observers could change their selection until they pressed the “Next” button. The progress of an observer was indicated using a small progress bar at the bottom center of the screen. At the end of the experiment, observers were informed with a final page confirming the conclusion of the experiment and were presented with unique session ids. They were required to enter this id to the crowdsourcing platform to verify that they have finished the experiment.
+%paper
 \section{Data Collection}
+%paper
+In order to reach as many people as possible, the experiment was published at Microworkers crowdsourcing platform3. The number of payed users that participated in the experiment through this platform was 801. For each completed experiment 0.3\$ were paid.
+
+Among these, 165 sessions were discarded due to incorrect responses given to the verification trials. Age, gender, and familiarity with computer graphics/image processing distribution of the participants are shown in Figure \ref{fig:age_gender_cgi}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/chapter3/age_gender_cgi.pdf}
+\caption{Age, gender, and computer graphics/image processing familiarity distribution of the participants.
+%paper
+}
+\label{fig:age_gender_cgi}
+\end{center}
+\end{figure}
+
+After collecting the experimental results, it was found that 18747 unique image triplets were judged by the observers. This amounts to approximately 11.6\% of the total possible triplets that can be obtained from 100 images, C(100, 3). Experiment sessions were independent and random for each participant, but it was guaranteed that a single session consisted of only unique triplets. This design resulted in a single response for the majority of the triplets. Some triplets received two responses and only a few received three or more. As such we considered this first phase of the experiment as a random exploration of all possible comparisons. However, as judging similarity based on a single response could be too subjective, we extended the experiment as discussed below to collect multiple responses for each triplet.
+
+The first phase of the experiment was extended to obtain three evaluations per triplet. Unlike the first phase where triplets were generated randomly, the second phase solely used the triplets that had been evaluated before. To achieve this, we sorted the triplets from the first phase in descending order. If a triplet had more than three responses, we randomly selected three of them. Triplets with exactly three responses were used as is. These two cases occurred very rarely. Next, triplets with two responses, and then a single response were presented randomly to obtain a total of 4890 triplets that had been evaluated three times. Among these thrice evaluated triplets, 2172 triplet were judged consistently by all three observers. The remaining 2820 triplets generated two-to-one responses. Similar to the first part of the experiment, the second part also contained the same validity checks to eliminate the responses of inattentive observers.
+%paper
 \subsection{Phase I}
 \subsection{Phase II}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sodales augue sit amet eros maximus, sed venenatis metus vehicula. Proin vel ligula porta justo iaculis ultrices non a ex. Sed lacinia bibendum feugiat. Integer mollis ac quam eu malesuada. Pellentesque malesuada facilisis metus quis condimentum. Nulla eget odio eget arcu elementum fringilla. Vestibulum eget pretium libero. Ut fermentum eleifend enim, nec facilisis sapien iaculis eu. Curabitur volutpat turpis risus, sed sollicitudin velit imperdiet sit amet.
-
-Aliquam tristique dictum facilisis. Aliquam non erat sed ligula lobortis varius id eu est. Suspendisse dapibus auctor diam ut ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum leo lectus, ornare ac lectus eget, placerat ultrices nulla. Praesent sit amet sodales nibh. Sed vestibulum non lorem non scelerisque.
-
-Sed eget fringilla purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis id metus risus. Vestibulum tempor leo orci, non semper quam aliquet non. Nam vitae convallis dolor, lacinia mollis nunc. Vestibulum imperdiet ornare mauris eget blandit. Etiam venenatis mauris dictum urna convallis fringilla vitae non dui. Etiam sit amet venenatis turpis. Nulla facilisi. Etiam sed nulla pulvinar, ullamcorper mauris a, vulputate risus. Integer ligula nisi, porta sed dapibus ac, mattis at libero. Curabitur sodales lacus ac ante facilisis, ac condimentum ante suscipit. Proin aliquet mattis diam tempus fermentum. Phasellus quis congue ante, sed fringilla dui.
-
-Nullam porta arcu id ultricies consequat. Suspendisse potenti. Morbi vel iaculis diam, semper mollis mi. Integer enim est, viverra et orci nec, porttitor euismod turpis. Curabitur non magna ut nisl mollis rutrum. Curabitur nulla libero, aliquam a magna sed, ullamcorper auctor orci. Donec lectus enim, mattis non est in, elementum fringilla nisi. Aenean imperdiet finibus turpis non mollis. Sed vulputate nisi nec leo blandit bibendum. Donec luctus augue facilisis, aliquam augue iaculis, fringilla ante. Praesent eget sem hendrerit odio tempor vulputate. Nam ac semper enim. Ut at massa sem. Nam at nulla fringilla mi commodo vulputate.
-
-Integer nec felis eu tellus dignissim dapibus. Fusce pulvinar rhoncus augue, et venenatis lectus imperdiet vitae. Nunc lacinia neque erat, vitae dignissim tortor elementum at. Phasellus hendrerit elit vulputate magna maximus aliquam. Nunc cursus lorem id molestie convallis. Morbi sollicitudin est eu quam fermentum, ut sodales nunc faucibus. Maecenas ullamcorper, urna eu tincidunt consectetur, ipsum quam tincidunt justo, nec interdum metus dui sed sapien. Nullam eget libero nibh. Aliquam lacinia rhoncus nisi et scelerisque. In dui erat, sollicitudin et massa eu, varius dignissim eros. 
 
 
 
