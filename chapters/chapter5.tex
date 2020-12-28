@@ -3,15 +3,45 @@
 
 \section{Problem Definition}
 
-The existence of numerous tone mapping operators that are available paved the way for many studies have are conducted for selecting the best one [40]. However, tone mapping can be conducted for different purposes, and rendering the resulting images to follow a consistent style can be one of them. For example, in a movie production process, making all frames consistently tone mapped, regardless of the content of the frames, can be a desired operation to impart a certain look and feel to the viewers. Although obtaining different renderings from tone mapping operators is partly achievable by using different tone mapping parameters, some tone mapping operators have none[ref!] or few parameters[ref!] while others[ref!] have too many. Besides, even though one set of parameters are found for a certain image to depict a certain style of rendering, the same set of parameters would not yield with the same look when applied to other images. Akyüz et al. [2] proposes a style based tone mapping operator that aims to consistently tone map different HDR images with the defined style.
+Tone mapping operators aim to reduce the dynamic range of an HDR image to display it on an low dynamic range display devices. The existence of numerous tone mapping operators that are available paved the way for many studies that are conducted for selecting the best one~\cite{parraga2018tone}. However, tone mapping can be conducted for different purposes, and rendering the resulting images to follow a consistent style can be one of them. For example, in a movie production process, making all frames consistently tone mapped, regardless of the content of the frames, can be a desired operation to impart a certain look and feel to the viewers. Although obtaining different renderings from tone mapping operators is partly achievable by using different tone mapping parameters, some tone mapping operators have none~\cite{Dura02} or few parameters~\cite{Fatt02} while others~\cite{Photomatix2010} have too many. Besides, even though one set of parameters are found for a certain image to depict a certain style of rendering, the same set of parameters would not yield with the same look when applied to other images. %that has different characteristics.
 
-\section{Method}
-Style based tone mapping [2] consists of two consecutive phases, namely \emph{calibration} and \emph{operation}. Calibration is the phase where the user defines a style and operation is the phase that the user given HDR image is tone mapped with the predefined style in the calibration phase. Figure \ref{fig:calibration_operation} shows the style based tone mapping algorithm steps and these steps are explained in the next sections.
+In this chapter, we propose a style based tone mapping operator that aims to consistently tone map different HDR images with the defined style.Figure \ref{fig:styles} shows different styles for the same images created by an artist. In this study, we approach the problem of defining a style by presenting the user an HDR image and with the help of the tool developed, ask the user to change the parameters until the image matches the desired look. By repeating this process for a small set of calibration images, we aim to \emph{learn} the style. Applying the learned style from calibration images to the previously unseen images is essentially a visual image similarity problem.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/chapter5/temp_calibration_operation.png}
-\caption{Calibration and operation phases of style based tone mapping}
+\includegraphics[width=\textwidth]{figures/chapter5/styles.png}
+\caption{Different artists may prefer different tone reproductions of the same HDR image. The same artist may also choose to produce different styles based on the situational/contextual considerations. The images reproduced by a professional artist using a different tool (top half) are replicated using our operator (bottom half). Our algorithm can also learn the styles of an artist and produce results consistent with them.}
+\label{fig:styles}
+\end{center}
+\end{figure}
+
+First, the problem of relating the input HDR image and the calibration images are solved with a method that has been commonly used for LDR images in the earlier work and then we employ two different but related methods that uses the findings from the user experiment of visual similarity for HDR images discussed in Chapter \ref{chp:b3} and Chapter \ref{chp:b4}. 
+
+
+\section{Related Work}
+Image reproduction is ultimately a subjective process where photographers and artists of all persuasions are free to reflect their own interpretation into the final rendering. For any task of reproduction, there is generally a vast range of choices from literal or realistic reproduction to those that significantly depart from reality. Since the early days of photography, many tools and systems have been developed to enable artists express their creativity~\cite{Adams80,Adams81,Adams83,White84}.
+
+Tone mapping, in the context of HDR imaging, is no different in creative expression than the art of photography. There is essentially an infinite amount of choices that an artist can make when tone mapping an HDR image for display purposes (Figure~\ref{fig:styles}). Perhaps, this is underscored by the large number of TMOs that have so far been developed that produce different outputs from the same HDR image~\cite{Rein2010}.
+
+However, most TMOs fail to provide sufficient freedom to artists to express their creativity. Some operators have specific goals such as preserving brightness~\cite{Tumb93}, contrast~\cite{Duan2004}, visibility~\cite{Ward97,yang2018adaptive}, and photographic look~\cite{Rein2002a}. Others, model the human visual system (HVS) to mimic the perceptual response of a human observer~\cite{Ferw96,Patt98,Meylan2006,khan2017tone}, sometimes also accounting for color appearance~\cite{Kuang2007,Reinhard2012} and device characteristics~\cite{Mantiuk2008}. Yet other operators provide parameter-free or a few parametered solutions that do not model the visual mechanisms but nevertheless produce good results~\cite{Dura02,Fatt02}.
+
+On the contrary, there are a few TMOs that are designed to enable artistic freedom such as the stroke-based interface that was proposed by Lischinski et al.~\cite{Lischinski2006}. This algorithm allows the user to select image regions using brush strokes and set different tone mapping parameters for each region. These parameters are then extrapolated to the entire image using an edge-preserving energy minimization method. Paris et al.~\cite{paris2011local} gives users the possibility of enhancing details or edge-preserving smoothing while tone mapping. This method first applies detail modifying local Laplacian filters on the log intensity of the image and then map the intensities to displayable range by scaling.  
+
+Another algorithm that allows a wide range of possibilities during tone mapping is the generic TMO~\cite{Mantiuk08a}. This operator hinges on the idea that although a large number of TMOs exist, the majority of them can be modeled using a generic tone curve followed by local modifications. The authors have demonstrated that by using a small set of parameters, a skilled artist can match the output of any TMO with the generic TMO. Although these algorithms offer expressive freedom to the artist, they have no notion of \emph{learning} the artist's preference. In fact, it has been shown by the authors that the same set of parameters can give rise to vastly different outputs for different images~\cite{Mantiuk08a}. As such, using these operators to automatically tone map a large number of images is impractical. 
+
+Of most similar to our work are the LDR retouching studies that allow enhancing a new image using a set of previous training examples~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, their focus is not HDR image tone mapping.
+
+Recently, deep neural networks are also used for learning image adjustment parameters. Some of these studies uses a training set of high quality images and learns the enhancement parameters in an unsupervised manner~\cite{park2018distort, chen2018deep,ignatov2018wespe}. These methods aim to enhance the general quality of the given image instead of applying a specific style. Yan et al.~\cite{yan2016automatic} on the other hand, proposes to learn a computation model of a style from image pairs, an untouched image and a stylized version. Their method incorporates high level semantic information of the pixels as well as local and global features of the image. Another study with a similar goal, HU et al.~\cite{hu2018exposure} uses unpaired data, a set of stylized images, for learning an operation sequence that will style an input image when applied. The benefit of learning modification steps is it makes the style explainable, which most of the deep learning based image enhancements methods lack. Similar to the previous LDR retouching studies, these methods also do not aim to tone map HDR images.
+
+To summarize, the primary difference of the current method from the earlier work is its ability to learn about the various tone mapping styles that may be desired by an artist from a small set of calibration images. These styles can then be applied when tone mapping a new HDR image. Our algorithm is the first of its kind that gives the ability to batch process a large number of HDR images with respect to different styles.
+
+\section{Method}
+Style based tone mapping ~\cite{akyuz2013style} consists of two consecutive phases, namely \emph{calibration} and \emph{operation}. Calibration is the phase where the user defines a style and operation is the phase that the user given HDR image is tone mapped with the predefined style in the calibration phase. Figure \ref{fig:calibration_operation} shows the style based tone mapping algorithm steps and these steps are explained in detail in the following sections.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/chapter5/algorithm.pdf}
+\caption{Style based tone mapping is comprised of a calibration and operation phase. The artist tone maps several images during calibration which results in a set of parameters. During operation, these parameters are interpolated based on image similarity to find the tone mapping parameters for the given image.}
 \label{fig:calibration_operation}
 \end{center}
 \end{figure}
@@ -21,7 +51,7 @@ In the calibration phase, first the user is asked to pick a name for the new sty
 
 Calibration images should be representative enough for different environments that has different characteristics and distinctive from each other to keep the number of the calibration images low. The number of calibration images directly affects the duration of the calibration phase, so although more calibration images would represent different environments better, in order not to overwhelm the user, the number of calibration images is chosen in a way that the user can finish the calibration phase in a reasonable time.
 
-Calibration images are selected in a semi automatic way. First, all images are taken from Fairchild's HDR image dataset [!ref] and then converted a feature space and using k-means algorithm divided into different clusters. After clusters are obtained, one calibration image is hand-selected from each cluster, yielding 6 calibration images in total, which are shown in Figure \ref{fig:calibration_images}.
+Calibration images are selected in a semi automatic way. First, all images are taken from Fairchild's HDR image dataset~\cite{fairchild2007hdr} and then converted a feature space and using k-means algorithm divided into different clusters. After clusters are obtained, one calibration image is hand-selected from each cluster, yielding 6 calibration images in total, which are shown in Figure \ref{fig:calibration_images}.
 
 \begin{figure}
 \begin{center}
@@ -54,13 +84,13 @@ Large detail strength ($\lambda_l$) & UM factor for large details \\
 \end{tabular}
 \end{table}
 
-The tone mapping operator is a modified version of Generic TMO[ref!]. Generic TMO models many existing tone mapping operator, both local and global with a tone curve followed by a spatial modulation function. It is note in [ref!] that same set of parameters yields very different results for different images. Style based tone mapping uses Generic TMO with the following modifications.
+The tone mapping operator is a modified version of Generic TMO~\cite{mantiuk2008modeling}. Generic TMO models many existing tone mapping operator, both local and global with a tone curve followed by a spatial modulation function. It is note in~\cite{mantiuk2008modeling} that same set of parameters yields very different results for different images. Style based tone mapping uses Generic TMO with the following modifications.
 
 Tone mapping parameters of Generic TMO are replaced with their percentile counterparts in order to make the algorithm less image dependent. For example, the parameter \emph{Brightness} in style based tone mapping with the value 50 would correspond to the median brightness value of the HDR image in Generic TMO's \emph{b} parameter. Likewise, for the parameter \emph{White point}, the value 95 would mean 5\% of the brightest pixels will be burned out. As one may imagine, representing the tone mapping parameters as percentiles is not sufficient to achieve the same effect on different images. In order to achieve this, style based tone mapping uses parameter interpolation to use \emph{similar} parameters to \emph{similar} images as described in Section \ref{sec:operation}. 
 
-The second modification to Generic TMO belongs to spatial modulation. In [!ref], a linear combination of band-pass filters as spatial modulation function. These filters are from modified Cortex transform and applied after global tone curve modulation. On the other hand, in style based tone mapping, local modulation is applied in multiple scales and then global operation is performed. This has the benefit of adjusting detail level before the HDR compression and gives better results. 
+The second modification to Generic TMO belongs to spatial modulation. In ~\cite{mantiuk2008modeling}, a linear combination of band-pass filters as spatial modulation function. These filters are from modified Cortex transform and applied after global tone curve modulation. On the other hand, in style based tone mapping, local modulation is applied in multiple scales and then global operation is performed. This has the benefit of adjusting detail level before the HDR compression and gives better results. 
 
-For detail modulation several approaches has been tested, unsharp masking (UM), bileteral filtering [!ref] and gradient reversal removed BF[!ref]. While BF-based filters results with less halo, they are computationally expensive, unlike UM, which is prone to halos but computationally efficient. Besides, UM is shown to be improve sharpness and local contrast in an earlier study [!ref]. It is decided to use UM even though it may introduce halos. For some cases, halos may be also introduced by the user in order to create an unrealistic style.
+For detail modulation several approaches has been tested, unsharp masking (UM), bileteral filtering~\cite{Tomasi98} and gradient reversal removed BF~\cite{Bae2006}. While BF-based filters results with less halo, they are computationally expensive, unlike UM, which is prone to halos but computationally efficient. Besides, UM is shown to be improve sharpness and local contrast in an earlier study~\cite{Trenta2012}. It is decided to use UM even though it may introduce halos. For some cases, halos may be also introduced by the user in order to create an unrealistic style.
 
 The detail modulation is achieved by first creating three low-pass images in the logarithmic domain for $small$, $medium$ and $large$ details.
 
@@ -76,7 +106,7 @@ where $L' = log L$ and $g_\sigma$ are 2D Gaussian filters are different scales. 
     L_{sm} = e^{L' + \lambda_s(L' - L'_{\sigma_s}) + \lambda_m(L'_{\sigma_s} - L'_{\sigma_m}) + \lambda_l(L'_{\sigma_m} - L'_{\sigma_l})}
 \end{equation}
 
-$L_{sm}$, spatially modulated luminance image, then fitted to the tone curve as in [ref!]. 
+$L_{sm}$, spatially modulated luminance image, then fitted to the tone curve as in~\cite{mantiuk2008modeling}. 
 
 \begin{equation}
     TC(L_{sm}) = 
@@ -88,7 +118,7 @@ $L_{sm}$, spatially modulated luminance image, then fitted to the tone curve as 
     \end{cases}
 \end{equation}
 
-where $L_{sm}'$ is the logarithm of the spatially modulated luminance $c$ is the contrast, and parameters $b$, $d_l$ and $d_h$ are the absolute values of the user given parameters in percentiles for brightness, black point and white point respectively. Parameters $a_h$ and $a_l$ are contrast compression for light and dark areas computed from [!ref].
+where $L_{sm}'$ is the logarithm of the spatially modulated luminance $c$ is the contrast, and parameters $b$, $d_l$ and $d_h$ are the absolute values of the user given parameters in percentiles for brightness, black point and white point respectively. Parameters $a_h$ and $a_l$ are contrast compression for light and dark areas computed from ~\cite{mantiuk2008modeling}.
 
 \begin{equation}
     a_l = {{c . d_l-1} \over {d_l}} \text{ and } a_h = {{c . d_h-1} \over {d_h}}
@@ -106,7 +136,7 @@ In Figure \ref{fig:calibration_phase}, the user interface that allows the user t
 
 \subsection{Operation}
 \label{sec:operation}
-In the operation phase, user selects a style from preset library that has been created in the calibration phase. Given a new HDR image to be tone mapped with the selected style, the tone mapping parameters \emph{t} (given in Table \ref{tab:tonemap_parameters}) must be determined based on calibration image tone mapping parameters \emph{$t_i$}. Style based tone mapping approaches this problem as image similarity problem. If two images are similar according to a similarity metric, their tone mapping parameters should be also similar. After the distances between input image and the calibration images, the tone mapping parameters are calculated as inverse distance transform [!ref]:
+In the operation phase, user selects a style from preset library that has been created in the calibration phase. Given a new HDR image to be tone mapped with the selected style, the tone mapping parameters \emph{t} (given in Table \ref{tab:tonemap_parameters}) must be determined based on calibration image tone mapping parameters \emph{$t_i$}. Style based tone mapping approaches this problem as image similarity problem. If two images are similar according to a similarity metric, their tone mapping parameters should be also similar. After the distances between input image and the calibration images, the tone mapping parameters are calculated as inverse distance transform~\cite{Shepard1968}:
 
 \begin{equation}
 \label{eq:inv_distance_transform}
@@ -115,7 +145,7 @@ In the operation phase, user selects a style from preset library that has been c
 
 Here, $\mathbf{f}$ is the feature vector of the current input image and $\mathbf{f_i}$ the feature vector for the calibration image $i$ and $\mathbf{t}$ its computed tone mapping parameters. Lastly, the function $d$ calculates the similarity between two feature vectors.
 
-In [2], images are represented with HSV histograms [ref] and histograms of gradients [ref] to capture colorimetric and structural properties of the images. HDR images varies highly on pixel values and it is hard to compare them directly. To overcome this, images are tone mapped to the interval $[0,1]$:
+In~\cite{akyuz2013style}, images are represented with HSV histograms~\cite{Ben2006} and histograms of gradients~\cite{dalal2005histograms} to capture colorimetric and structural properties of the images. HDR images varies highly on pixel values and it is hard to compare them directly. To overcome this, images are tone mapped to the interval $[0,1]$:
 
 \begin{equation}
     L_{out} = {{L_{in}} \over {1 + L_{in}}}, 
@@ -130,7 +160,7 @@ and color channels are transformed with:
 The feature vector is then computed using transformed values, as a $60$ dimensional vector, $3x15$ bins for HSV histogram and $15$ bins for gradient histogram. 
 
 Unfortunately, treating histograms as high dimensional points and computing their Euclidean distances does not yield correct results as this ignores the proximity information of the bins. For instance, although the histogram $H1 = (1, 0, 0, \cdots, 0)$ is closer to
-$H2 = (0, 1, 0, \cdots, 0)$ than $H3 = (0, 0, 1, \cdots, 0)$, their Euclidean distances are equal. To circumvent this problem, we convolved each histogram with a 1-D Gaussian $(\sigma = 0.7)$ prior to computing their distances [Ben-Haim et al. 2006]. Circular similarity of the hue histogram is also accounted. Thus the final distance metric between two feature vectors \textbf{$f_i$} and \textbf{$f_j$} become:
+$H2 = (0, 1, 0, \cdots, 0)$ than $H3 = (0, 0, 1, \cdots, 0)$, their Euclidean distances are equal. To circumvent this problem, we convolved each histogram with a 1-D Gaussian $(\sigma = 0.7)$ prior to computing their distances ~\cite{Ben2006}. Circular similarity of the hue histogram is also accounted. Thus the final distance metric between two feature vectors \textbf{$f_i$} and \textbf{$f_j$} become:
 
 \begin{equation}
     d(\mathbf{f_i, f_j}) = \mathbf{(f_i - f_j)}^T\mathbf{(f_i-f_j)},
@@ -138,22 +168,38 @@ $H2 = (0, 1, 0, \cdots, 0)$ than $H3 = (0, 0, 1, \cdots, 0)$, their Euclidean di
 
 where \textbf{$f$} is the combined histogram. This metric is used to measure the similarity between input HDR image and calibration images. Also the same distance metric is used to cluster Fairchild dataset in order to pick calibration images.
 
-After tone mapping parameters are calculated with parameter interpolation, HDR image is tonemapped and presented to the user in a similar user interface like Figure \ref{fig:calibration_images}. User can do the final adjustments and save the tone mapped LDR image. %batch process
+After tone mapping parameters are calculated with parameter interpolation, HDR image is tonemapped and presented to the user in a similar user interface like Figure \ref{fig:calibration_images}. User can do the final adjustments and save the tone mapped LDR image. Figure \ref{fig:gallery} shows a gallery of our results. Note that despite the large variation of the image content, the selected styles are successfully applied to each image.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/chapter5/gallery.png}
+\caption{All of these images are automatically tone mapped using the four styles that are generated.}
+\label{fig:gallery}
+\end{center}
+\end{figure}
 
 \section{Improvements with User Study Results}
-Here we show two modifications of this method that are made possible by the experimental findings of the current study.
+Although style based tone mapping has achieved some success for consistently tone mapping different images, the image similarity method given in Section \ref{sec:operation} can be improved with the findings from the conducted user study. In this section, two modifications of this method that are made possible by the experimental findings of the user study is given.
 
 \subsection{Parameter Interpolation with All Features}
-In the first version, features given in Table \ref{tab:table_feature} are extracted from the selected HDR image and calibration images. Then, distances between these features are calculated using the corresponding distance metrics given in the same table. The weighted average of these feature distances are calculated using the coefficients obtained from the logistic regression model (Equation \ref{eq:log_regression}), with the idea that less important features should also contribute less to the distance. This operation can be summarized with the following equation:
+
+In the first modification, features given in Table \ref{tab:table_feature} are extracted from the selected HDR image and calibration images. Then, distances between these features are calculated separately using the corresponding distance metrics given in the same table. The weighted average of these feature distances are calculated using the coefficients obtained from the logistic regression model (Equation \ref{eq:log_regression}), with the idea that less important features should also contribute less to the distance. This operation can be summarized with the following equation:
 \begin{equation}
     d_i = \sum_{j=1}^{6}c_j d_j(\mathbf{f_i}, \mathbf{f_{ij}})
 \end{equation}
 
+where $c_j$ is the coefficient of the $j^{th}$ feature, $\mathbf{f_j}$ is the $j^{th}$ feature of the input image, $\mathbf{f_{ij}}$ is the same for the $i^{th}$ calibration image, and finally $d_j$ is the distance metric for the $j^{th}$ feature. The result $d_i$ represents the combined distance between the input image and the corresponding calibration image. These combined distances are calculated between the selected HDR image and all calibration images. The tone mapping parameters for the selected HDR image are then interpolated using inverse distance transform as in Equation \ref{eq:inv_distance_transform}. This method differs from the original one in several aspects: 
 
-where $c_j$ is the coefficient of the $j^{th}$ feature, $\mathbf{f_j}$ is the $j^{th}$ feature of the input image, $\mathbf{f_{ij}}$ is the same for the $i^{th}$ calibration image, and finally $d_j$ is the distance metric for the $j^{th}$ feature. The result $d_i$ represents the combined distance between the input image and the corresponding calibration image. These combined distances are calculated between the selected HDR image and all calibration images. The tone mapping parameters for the selected HDR image are then interpolated using inverse distance transform as in Equation \ref{eq:inv_distance_transform}.
+\begin{itemize}
+    \item Using a different and more representative set of features, luminance which is one of the most important features of HDR images has a separate feature vector,
+    \item More suitable distance metrics for feature types, for example, EMD takes into account bin proximity for calculating differences between histograms,
+    \item Instead of using a single fused feature vector, each feature distance calculated separately,
+    \item Employing a weighted average of feature vector distances with weights obtained from a user experiment, compared to using equal weight.
+\end{itemize}
+
 
 \subsection{Parameter Interpolation with Related Features}
-While the previous approach calculates a single distance value between images and use this value to interpolate all tone mapping parameters, Version II relates model features with tone mapping parameters and interpolates individual tone mapping parameters with different weights. To achieve this, we use the relationships defined in Table \ref{tab:feature_mapping}.
+While the previous approach calculates a single distance value between images and use this value to interpolate all tone mapping parameters, the second modification relates model features with tone mapping parameters and interpolates individual tone mapping parameters with different weights. To achieve this, we use the relationships defined in Table \ref{tab:feature_mapping}.
 
 \begin{table}
 \caption{Model features used for interpolation of tone mapping parameters used in Version II.}
@@ -187,6 +233,63 @@ Other parameters are interpolated analogously. Because GIST and deep learning fe
 where $\mathbf{t_0}$ represents individually interpolated TMO parameters, $\mathbf{t_1}$ TMO parameters interpolated as a whole using GIST similarity only, and $\mathbf{t_2}$ TMO parameters interpolated as a whole using solely deep learning feature similarity. The weights control the influence of TMO parameters that are computed by using these different approaches.
 
 \section{Results}
-In Figure 6, we compare several results obtained by using the original style based tone mapping method as well as with the modifications proposed above. In the first row, we show the results of the “Paul Bunyan” scene from the HDR Photographic Survey [12]. This scene depicts a bright outdoors environment with colorful foreground objects. It may be noted that all results are similar but the individual parameter interpolation with equally weighted GIST and deep learning features (d) has slightly higher contrast (please refer to supplementary full resolution images for better comparison).
+In Figure~\ref{FigStyle}, we compare several results obtained by using the original style based tone mapping method as well as with the modifications proposed above. In the first row, we show the results of
+the ``Paul Bunyan'' scene from the HDR Photographic Survey~\cite{fairchild2007hdr}. This scene depicts a bright outdoors environment with colorful foreground objects. It may be noted that all results are similar but the individual parameter interpolation with equally weighted GIST and deep learning features (d) has slightly higher contrast (please refer to supplementary full resolution images for better comparison). The overall colorful style is preserved in all images. In the second row, we show the ``Peppermill'' night scene from the same dataset. For this scene the difference of Version II is more clear as images in (c) and (d) exhibit a darker rendering, which is more suitable for a night scene. The reason for this darkening effect is that the $t_b$ parameter for tone mapping becomes more similar to the $t_b$ parameter of the night image in the calibration set due to the similarity of the \emph{luminance} features between these images. The addition of GIST and deep learning features in (d) yields a slightly brighter image compared to (c). We encourage the readers to refer to the electronic supplementary materials for more clear observation of the differences.
 
-The overall colorful style is preserved in all images. In the second row, we show the “Peppermill” night scene from the same dataset. For this scene the difference of Version II is more clear as images in (c) and (d) exhibit a darker rendering, which is more suitable for a night scene. The reason for this darkening effect is that the $t_b$ parameter for tone mapping becomes more similar to the tb parameter of the night image in the calibration set due to the similarity of the luminance features between these images. The addition of GIST and deep learning features in (d) yields a slightly brighter image compared to (c). We encourage the readers to refer to the electronic supplementary materials for more clear observation of the differences.
+\begin{landscape}
+\begin{figure}
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v1.png}
+    \caption{Original}
+    \label{FigStyle:original}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v2.png}
+    \caption{Version I}
+    \label{FigStyle:VerI}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_1.png}
+    \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
+    \label{FigStyle:VerIIa}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_w1_w2.png}
+    \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
+    \label{FigStyle:VerIIb}
+\end{subfigure}\\
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v1.png}
+    \caption{Original}
+    \label{FigStyle:original}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v2.png}
+    \caption{Version I}
+    \label{FigStyle:VerI}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_1.png}
+    \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
+    \label{FigStyle:VerIIa}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_w1_w2.png}
+    \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
+    \label{FigStyle:VerIIb}
+\end{subfigure}\hfill
+\caption{Application of our findings for the style-based tone mapping
+    problem.  Original results are shown in the first column, followed
+        by Version I in the second column and two variants of Version II
+in the last two columns.}
+\label{FigStyle}
+\end{figure}
+\end{landscape}
