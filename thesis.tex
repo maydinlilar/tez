@@ -69,7 +69,7 @@
 \title{Visual Similarity for HDR Images with Applications to Tone Mapping}
 \turkishtitle{ODTÜ Tez Şablonu}
 
-\date{Feb 2021}
+\date{February 2021}
  
 % prof : Prof. Dr.
 % assocprof : Assoc. Prof. Dr.
@@ -77,9 +77,9 @@
 % dr : Dr.
 %
 % Director of Institute
-\director[prof]{Name Surname}
+\director[prof]{Halil Kalıpçılar}
 % Head of Department
-\headofdept[prof]{Name Surname}
+\headofdept[prof]{Halit Oğuztüzün}
 %
 % Supervisor : English and Turkish
 \supervisor[prof]{Ahmet Oğuz Akyüz}
@@ -109,7 +109,7 @@
 \committeememberi[assistprof]{Name Surname}
 \affiliationi{Computer Engineering, METU}
 % Second committee member is always your supervisor
-\committeememberii[assistprof]{Name Surname}
+\committeememberii[prof]{Ahmet Oğuz Akyüz}
 \affiliationii{Computer Engineering, METU}
 
 % IMPORTANT: If you are Ph.D. student your co-supervisor can not be in your 
@@ -120,14 +120,14 @@
 % \def\@assistproftitlename{Assist. Prof. Dr.}\def\@tassistproftitlename{Yrd. Doç. Dr.}
 % \def\@drtitlename{Dr.}\def\@tdrtitlename{Dr.}
 
-\committeememberiii[assistprof]{Name Surname}
-\affiliationiii{Computer Engineering, Bilkent University}
+\committeememberiii[prof]{Mine Özkar}
+\affiliationiii{Architecture, ITU}
 % Fourth committee member
-\committeememberiv[assistprof]{Gülşah Tümüklü Özyer}
-\affiliationiv{Computer Engineering, Atatürk University}
+\committeememberiv[prof]{Tolga Kurtuluş Çapın}
+\affiliationiv{Computer Engineering, TED University}
 % Fifth committee member
-\committeememberv[assistprof]{Jüri}
-\affiliationv{JüriBölüm, Ankara University}
+\committeememberv[assocprof]{Sinan Kalkan}
+\affiliationv{Computer Engineering, METU}
 %
 % Keywords : English & Turkish, Comma seperated
 \keywords{keywords, seperated, with, comma}
@@ -136,37 +136,13 @@
 % Abstract in English
 %
 \abstract{
-Assessing visual similarity for low dynamic range (LDR) images is an extensively studied
-problem. Promising results are obtained when an image database is queried to find the images
-containing a specific object of interest, a task known as exact matching. However, this problem
-becomes more difficult if one needs approximate similarity, which is the task of determining
-images that are merely visual similar to a query image. In this study, we aim to shed light on this
-problem with an experimental approach. To this end, we first collect crowd-sourcing data
-through a novel web-based experimental interface, in which the participants assess the visual
-similarity of HDR images. We then collect a large number of features to assess how well they
-correlate with the participants responses. We also include features computed by convolutional
-neural networks, which are also proven to be successful in standard similarity tasks. We
-compute the correlation of each feature with the crowdsourcing data, first in isolation, and then
-merging multiple features by using different weights for each feature determined through a
-metric learning approach. Based on the obtained results, we proposed a style-based tone
-mapping algorithm that can successfully impart a user-defined style to various HDR images
-determined to be similar with respect to our metric.
+Assessing visual similarity for low dynamic range (LDR) images is an extensively studied problem. Promising results are obtained when an image database is queried to find the images containing a specific object of interest, a task known as exact matching. However, this problem becomes more difficult if one needs approximate similarity, which is the task of determining images that are merely visual similar to a query image. In this study, the aim ıs to shed light on this problem with an experimental approach. To this end, first crowd-sourcing data is collected through a novel web-based experimental interface, in which the participants assess the visual similarity of HDR images. Then, a set of features collected to assess how well they correlate with the participants responses. Features computed by convolutional neural networks are also included, which are proven to be successful in standard similarity tasks. The correlation of each feature with the crowdsourcing data is computed, first in isolation, and then merging multiple features by using different weights for each feature determined through a metric learning approach. Based on the obtained results, a style-based tone mapping algorithm is proposed that can successfully impart a user-defined style to various HDR images determined to be similar with respect to the proposed metric.
 }
 %
 % Turkish Abstract
 %
 \oz{
-Çok çeşitli amaçlarla kullanılmak üzere standard imgelerin benzerliğini belirleyen bir çok
-algoritma bulunmasına rağmen HDR imgeler için yapılmış çalışma sayısı oldukça azdır.
-Teknolojinin gelişmesiyle birlikte HDR imgelerin benzerliğinin objektif bir biçimde
-değerlendirilmesi önem kazanacaktır. Bu sebeple, imgelerin benzerliklerini ölçmede etkili
-olacağını düşündüğümüz, imgelerin alt ve orta seviye özelliklerini ve uzaklık metriklerini öne
-sürüyoruz. Yaptığımız kullanıcı deneyi ile subjektif benzerlik skorları elde edilmiştir ve önerilen
-özelliklerin bu skorlarla olan korelasyonu değerlendirilmiştir. Daha sonra, bu özelliklerin çeşitli
-ağırlıklarla oluşturulan kombinasyonunun her bir özellikle tek tek elde edilen sonuçlardan daha
-başarılı sonuç verdiği gözlenmiştir. Geliştirilen tekniğin bir uygulaması olarak HDR imgelerin
-standard imgelere dönüştürülmesi probleminde imgeler arası benzerliğin kullanılmasının etkisi
-gösterilmiştir. 
+Çok çeşitli amaçlarla kullanılmak üzere standard imgelerin benzerliğini belirleyen bir çok algoritma bulunmasına rağmen YDA imgeler için yapılmış çalışma sayısı oldukça azdır. Teknolojinin gelişmesiyle birlikte YDA imgelerin benzerliğinin objektif bir biçimde değerlendirilmesi önem kazanacaktır. Bu sebeple, imgelerin benzerliklerini ölçmede etkili olacağını düşündüğümüz, imgelerin alt ve orta seviye özelliklerini ve uzaklık metriklerini öne sürüyoruz. Yaptığımız kullanıcı deneyi ile subjektif benzerlik skorları elde edilmiştir ve önerilen özelliklerin bu skorlarla olan korelasyonu değerlendirilmiştir. Daha sonra, bu özelliklerin çeşitli ağırlıklarla oluşturulan kombinasyonunun her bir özellikle tek tek elde edilen sonuçlardan daha başarılı sonuç verdiği gözlenmiştir. Geliştirilen tekniğin bir uygulaması olarak YDA imgelerin standard imgelere dönüştürülmesi probleminde imgeler arası benzerliğin kullanılmasının etkisi gösterilmiştir. 
 } 
 %
 % Dedication 
@@ -204,6 +180,7 @@ gösterilmiştir.
 \input{chapters/chapter4.tex}
 \input{chapters/chapter5.tex}
 \input{chapters/chapter6.tex}
+\input{chapters/chapter7.tex}
 
 \input{references.tex}
 
@@ -216,8 +193,10 @@ gösterilmiştir.
 %\bibliographystyle{abbrv}
 
 % if you have more that one appendix, then use \appendices, otherwise use 
-\appendices
+\appendix
 \input{appendix1/appendix1.tex}
 \input{appendix2/appendix2.tex}
 \input{appendix3/appendix3.tex}
+
+\input{cv.tex}
 \end{document}

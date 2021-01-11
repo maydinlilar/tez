@@ -7,13 +7,13 @@ In evaluations, HDR images used directly, as well as by linear scaling and apply
 
 \begin{equation}
     I' = \begin{cases}
-    P_5 (I), \text{ if $I < P_5(I)$} \\
-    I, \text{ if $P_5(I) \leq I \leq P_{95}(I) $} \\
-    P_{95}(I), \text{if $I > P_{95}(I)$}, \\
+    P_5 (I), &\text{ if $I < P_5(I)$} \\
+    I, &\text{ if $P_5(I) \leq I \leq P_{95}(I) $} \\
+    P_{95}(I), &\text{if $I > P_{95}(I)$}, \\
     \end{cases}
 \end{equation}
 
-where $I$ denotes the original image values and $I'$ is after outlier pixel values are removed. Then HDR image is linearly scaled with
+where $I$ denotes the original image values and $I'$ is after the pixel values outside of the range are removed. Then HDR image is linearly scaled with
 
 \begin{equation}
     lin(I)  = {{I' - I'_{min}} \over {I'_{max} - I'_{min}}}, 
@@ -21,7 +21,7 @@ where $I$ denotes the original image values and $I'$ is after outlier pixel valu
 
 for each color channel separately.
 
-Besides of using original and linearly scaled HDR images, tone mapped version of the images are also evaluated. For this purpose commonly used tone mapping operators Mai et al. ~\cite{mai2011subjective}, Reinhard et al. (local) ~\cite{reinhard2002photographic}, Reinhard et al. (global) ~\cite{reinhard2002photographic}, Durand \& Dorsey~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2006backward}, Reinhard \& Devlin~\cite{reinhard2005dynamic}, Fattal et al.~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2008modeling}, Ferradans et al.~\cite{ferradans2011analysis} and Pattanaik et al.~\cite{pattanaik2000time} are used. These TMOs are available in opensource PFStmo software library ~\cite{mantiuk2007high}, which provides a reliable implementation of several commonly used TMOs.[!]
+Besides of using original and linearly scaled HDR images, tone mapped version of the images are also evaluated. For this purpose commonly used tone mapping operators Mai et al. ~\cite{mai2010optimizing}, Reinhard et al. (local) ~\cite{reinhard2002photographic}, Reinhard et al. (global) ~\cite{reinhard2002photographic}, Durand \& Dorsey~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2006perceptual}, Reinhard \& Devlin~\cite{reinhard2005dynamic}, Fattal et al.~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2008display}, Ferradans et al.~\cite{ferradans2011analysis} and Pattanaik et al.~\cite{pattanaik2000time} are used. The implementations of these TMOs are available in opensource PFStmo software library ~\cite{mantiuk2007high}, which provides a reliable implementation of several commonly used TMOs. The images in the experiment dataset are tone mapped using the PFStmo software with the given TMOs using the default parameters.
 
 
 \section{Individual Feature Correlation}
@@ -35,8 +35,8 @@ P = (x_1, \ldots, x_N),
 where each element is defined as:
 \begin{equation}
 x_i = \begin{cases}
-1, \text{if $n(A_i) > n(B_i)$}, \\
-0, \text{otherwise}.
+1, &\text{if $n(A_i) > n(B_i)$}, \\
+0, &\text{otherwise}.
 \end{cases}
 \end{equation}
 
@@ -47,8 +47,8 @@ For each feature type $f$, we also computed the feature representations of each 
 where
 \begin{equation}
 y_i = \begin{cases}
-1, \text{ if $ d(f(R_i), f(A_i)) < d(f(R_i), f(B_i))$ } \\
-0, \text{otherwise}.
+1, &\text{ if $ d(f(R_i), f(A_i)) < d(f(R_i), f(B_i))$ } \\
+0, &\text{otherwise}.
 \end{cases}
 \end{equation}
 
@@ -60,12 +60,10 @@ s = {{S_{11}(P, F) + S_{00}(P, F)} \over {N}},
 
 with $S_{11}$ and $S_00$ representing the total count of matching ones and zeros respectively:
 
-\begin{equation}
-    S_{11}(P, F) = P \cdot F,
-\end{equation}
-\begin{equation}
-    S_{00}(P, F) = \neg P \cdot \neg F, 
-\end{equation}
+\begin{align}
+    S_{11}(P, F) &= P \cdot F,\\
+    S_{00}(P, F) &= \neg P \cdot \neg F, 
+\end{align}
 
 
 Note that the correlation coefficient s can take a value in range [0, 1]. In the following, we multiply this coefficient by 100 to represent the correlations as percentages.
@@ -83,14 +81,14 @@ The raw feature correlations with the first (Section \ref{sec:exp_phase_I}) and 
 HDR-original & 56.79 & 58.09 & 55.10 & 53.14 & 52.39 & 56.82 \\
 HDR-linear & 63.54 & 63.31 & 55.69 & 54.07 & 54.36 & 58.18 \\
 Drago et al.~\cite{drago2003adaptive} & 65.88 & 65.74 & 56.73 & 57.45 & 51.17 & 58.23 \\
-Mai et al.~\cite{mai2011subjective} & 65.28 & 65.13 & 56.01 & 56.77 & 51.90 & 57.57 \\ 
+Mai et al.~\cite{mai2010optimizing} & 65.28 & 65.13 & 56.01 & 56.77 & 51.90 & 57.57 \\ 
 Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 56.58 & 54.77 & 51.43 & 57.89 \\
 Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 56.59 & 54.68 & 51.39 & 57.92 \\
 Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 55.77 & 55.12 & 51.79 & 57.85 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 65.42 & 65.33 & 56.29 & 55.38 & 52.08 & 58.03 \\
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 56.29 & 55.38 & 52.08 & 58.03 \\
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 57.15 & 55.89 & 54.85 & 58.33 \\
 Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 56.39 & 57.46 & 51.92 & 58.19 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} & 65.71 & 65.74 & 55.98 & 56.99 & 51.84 & 57.86 \\
+Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 55.98 & 56.99 & 51.84 & 57.86 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 55.18 & 56.51 & 51.99 & 58.33 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 53.04 & 54.61 & 53.06 & 57.84 
 \end{tabular}
@@ -108,14 +106,14 @@ Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 53.04 & 54.61 & 53.0
 HDR-original & 64.88 & 67.14 & 60.23 & 58.39 & 54.42 & 63.50 \\
 HDR-linear & 75.58 & 76.13 & 60.78 & 57.79 & 57.97 & 65.71 \\
 Drago et al.~\cite{drago2003adaptive} & 80.88 & 81.80 & 62.58 & 62.72 & 53.87 & 65.39 \\
-Mai et al.~\cite{mai2011subjective} & 80.00 & 79.95 & 61.11 & 61.66 & 53.46 & 64.06 \\
+Mai et al.~\cite{mai2010optimizing} & 80.00 & 79.95 & 61.11 & 61.66 & 53.46 & 64.06 \\
 Reinhard et al. (local)~\cite{reinhard2002photographic} & 80.92 & 81.61 & 62.21 & 58.16 & 53.87 & 64.88 \\
 Reinhard et al. (global)~\cite{reinhard2002photographic} & 80.92 & 81.57 & 62.21 & 57.97 & 54.75 & 64.75 \\
 Durand \& Dorsey~\cite{durand2002fast} & 81.75 & 81.34 & 62.07 & 59.22 & 53.00 & 64.19 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 80.41 & 80.65 & 61.15 & 59.59 & 52.49 & 64.47 \\ 
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41 & 80.65 & 61.15 & 59.59 & 52.49 & 64.47 \\ 
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37 & 80.41 & 64.15 & 61.43 & 60.55 & 65.44 \\
 Fattal et al.~\cite{durand2002fast} & 80.51 & 80.92 & 62.30 & 64.24 & 52.90 & 65.02 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} & 80.00 & 80.78 & 62.12 & 61.71 & 54.56 & 64.19 \\
+Mantiuk et al.~\cite{mantiuk2008display} & 80.00 & 80.78 & 62.12 & 61.71 & 54.56 & 64.19 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 81.38 & 82.21 & 58.39 & 61.61 & 55.02 & 65.25 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 78.66 & 78.11 & 57.33 & 58.66 & 55.71 & 64.52
 \end{tabular}
@@ -139,14 +137,14 @@ In both models, closely related deeply learned features VGG16 and VGG19 used as 
 HDR-original &  56.79 & 58.09 & 57.91 \\
 HDR-linear &  63.54 & 63.31 & 63.85 \\
 Drago et al.~\cite{drago2003adaptive} &  65.88 & 65.74 & 66.31 \\
-Mai et al.~\cite{mai2011subjective} &  65.28 & 65.13 & 66.06 \\
+Mai et al.~\cite{mai2010optimizing} &  65.28 & 65.13 & 66.06 \\
 Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 66.21 \\
 Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 66.29 \\
 Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 66.44 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 65.42 & 65.33 & 65.97 \\
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 65.97 \\
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 65.81 \\
 Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 66.25 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} & 65.71 & 65.74 & 66.01 \\
+Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 66.01 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 66.77 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 64.76
 \end{tabular}
@@ -161,14 +159,14 @@ Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 64.76
 HDR-original &  64.88  &  67.14  &  66.59 \\
 HDR-linear &  75.58   & 76.13 & 76.96 \\
 Drago et al. ~\cite{drago2003adaptive} &  80.88 &    81.8 &    82.35 \\
-Mai et al. ~\cite{mai2011subjective} &  80 &   79.95    & 81.2 \\
+Mai et al. ~\cite{mai2010optimizing} &  80 &   79.95    & 81.2 \\
 Reinhard et al. (local) ~\cite{reinhard2002photographic} & 80.92 &    81.61 &    82.21 \\
 Reinhard et al. (global) ~\cite{reinhard2002photographic} & 80.92   & 81.57   &  82.3 \\
 Durand \& Dorsey~\cite{durand2002fast} & 81.75   & 81.34  &  82.76 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 80.41   & 80.65 &   81.24 \\
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41   & 80.65 &   81.24 \\
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37  &  80.41 &    81.24 \\
 Fattal et al.~\cite{durand2002fast} & 80.51   & 80.92 &    81.98 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} &  80   & 80.78   & 80.51 \\
+Mantiuk et al.~\cite{mantiuk2008display} &  80   & 80.78   & 80.51 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 81.38 &    82.21 &    83.27 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
 \end{tabular}
@@ -180,12 +178,10 @@ Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
 %paper
 In our first analysis, we aimed to develop a model that
 predicts which of the two test images is more similar to the reference image using the pairwise distances between the test and reference images. Assuming that j is a feature index, one can compute these pairwise differences as follows:
-\begin{equation}
-    a_j = d_j(f_j(R), f_j(A)), 
-\end{equation}
-\begin{equation}
-   b_j = d_j(f_j(R), f_j(B)). 
-\end{equation}
+\begin{align}
+    a_j &= d_j(f_j(R), f_j(A)), \\
+   b_j &= d_j(f_j(R), f_j(B)). 
+\end{align}
 
 Here $d_j$ represents the distance metric chosen for the $j^{th}$ feature. The model takes as input these differences for all features (i.e. $j \in {1, 2, 3, 4, 5, 6}$) and computes their weighted average as its response:
 
@@ -238,14 +234,14 @@ were selected for training and the remaining 10\% for testing. This process was 
 HDR-original & 60.67 & 70.76 & 0.0573 & 0.0768 & -3.3241 & -0.0028 & -0.0124 & -0.2921 & -10.7505 \\
 HDR-linear & 64.81 & 78.83 & 0.0005 & -5.4801 & -5.9902 & -0.0074 & -0.0635 & -0.3289 & -10.1782 \\
 Drago et al. ~\cite{drago2003adaptive} & 67.36 & 83.49 & -0.0423 & -7.8751 & -7.6339 & -0.0506 & -0.0958 & 0.0043 & -7.3615 \\
-Mai et al. ~\cite{mai2011subjective} & 66.70 & 81.78 & 0.0085 & -5.2932 & -7.9526 & -0.0601 & -0.1078 & -0.0358 & -4.9275 \\
+Mai et al. ~\cite{mai2010optimizing} & 66.70 & 81.78 & 0.0085 & -5.2932 & -7.9526 & -0.0601 & -0.1078 & -0.0358 & -4.9275 \\
 Reinhard et al. (local) ~\cite{reinhard2002photographic} & 67.19 & 83.21 & -0.0154 & -7.3838 & -8.7207 & -0.0688 & -0.0853 & 0.0145 & -7.8380 \\
 Reinhard et al. (global) ~\cite{reinhard2002photographic} & 67.34 & 83.16 & -0.0230 & -7.0932 & -8.8856 & -0.0687 & -0.0783 & 0.0101 & -7.4470 \\
 Durand \& Dorsey~\cite{durand2002fast} & 66.92 & 83.03 & -0.0604 & -8.1694 & -7.3044 & -0.0977 & -0.0147 & 0.0082 & -6.8549 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 66.64 & 81.74 & 0.0220 & -6.1999 & -8.0462 & -0.1081 & -0.0286 & -0.0102 & -10.0494 \\
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 66.64 & 81.74 & 0.0220 & -6.1999 & -8.0462 & -0.1081 & -0.0286 & -0.0102 & -10.0494 \\
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 66.72 & 82.75 & -0.0332 & -5.6555 & -8.8871 & -0.1284 & -0.0144 & -0.0254 & -7.9970 \\
 Fattal et al.~\cite{durand2002fast} & 67.25 & 82.56 & -0.0025 & -6.2320 & -8.3176 & -0.1120 & -0.0272 & -0.0143 & -7.9175 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} & 66.91 & 82.15 & -0.0005 & -5.7555 & -8.4433 & -0.0777 & -0.0548 & -0.0041 & -6.8189 \\
+Mantiuk et al.~\cite{mantiuk2008display} & 66.91 & 82.15 & -0.0005 & -5.7555 & -8.4433 & -0.0777 & -0.0548 & -0.0041 & -6.8189 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 67.21 & 83.53 & 0.0226 & -5.7782 & -9.8899 & -0.0801 & -0.0432 & -0.0060 & -7.4090 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 65.02 & 79.89 & -0.0365 & -7.5194 & -5.6052 & 0.0132 & -0.0565 & 0.0211 & -6.1389 \\
 \end{tabular}
@@ -259,15 +255,13 @@ Despite the first regression model yielding high correlations exceeding 80\% for
 
 In order to allow for this possibility, our second regression model was designed in the following manner.
 For each trial, $ti = R_i - A_i - B_i, i \in {1, \cdots , N}$, we inserted two elements to our user response vector:
-\begin{equation}
-    x_{2i-1} = \begin{cases} 
-    1, \text{ if $n(A_i) > n(Bi)$ } \\
-    0, \text{otherwise},
-    \end{cases}
-\end{equation}
-\begin{equation}
-    x_{2i} = \neg  x_{2i-1},
-\end{equation}
+\begin{align}
+    x_{2i-1} &= \begin{cases} 
+    1, &\text{ if $n(A_i) > n(Bi)$ } \\
+    0, &\text{otherwise},
+    \end{cases}\\
+    x_{2i} &= \neg  x_{2i-1},
+\end{align}
     
 
 yielding a vector of size $2N$:
@@ -276,12 +270,10 @@ yielding a vector of size $2N$:
 \end{equation}
 
 As for the model’s inputs each element of the feature vector was computed as
-\begin{equation}
-    y_{2i-1} = [a_1 \cdots a_6], 
-\end{equation}
-\begin{equation}
-    y_{2i} = [b_1 \cdots b_6], 
-\end{equation}
+\begin{align}
+    y_{2i-1} &= [a_1 \cdots a_6], \\
+    y_{2i} &= [b_1 \cdots b_6], 
+\end{align}
 
 
 yielding
@@ -297,17 +289,16 @@ In summary, the elements of the feature vector always followed the A, B order, w
 \end{equation}
 
 By converting this response to probability values as in Equation \ref{eq:response_prob}, one can compute a relative degree of similarity between the two images. To validate this model, we computed the model response twice by using $R_i - A_i$ and $R_i - B_i$ image pairs:
-\begin{equation}
-    Pr(x = left) = {{1} \over {1 + e^{-r_a}}} 
-\end{equation}
-\begin{equation}
-    Pr(x = right) = {{1} \over {1 + e^{-r_b}}}
-\end{equation}
+\begin{align}
+    Pr(x = left) &= {{1} \over {1 + e^{-r_a}}} \\
+    Pr(x = right) &= {{1} \over {1 + e^{-r_b}}}
+\end{align}
 
 
 Given a triplet, if we found $Pr(x = left) > Pr(x =right)$ we assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s ~\cite{drago2003adaptive} TMO in the extended experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
-\begin{sidewaystable}
+\begin{landscape}
+\begin{table}
 \caption{The correlations of the second regression model with the user responses. Phase I and Phase II represent the initial and extended experiments respectively. The coefficients are reported for the Phase II of the experiment only due to its higher correlation with the user data.}
 \centering
 \begin{tabular}{r|c c || r r r r r r r}
@@ -318,15 +309,16 @@ Given a triplet, if we found $Pr(x = left) > Pr(x =right)$ we assumed the model 
 HDR-original & 60.75 & 70.80 & 2.9323 & -0.1531 & -2.8191 & -0.0024 & -0.0063 & -0.2494 & -7.1569 \\
 HDR-linear & 64.65 & 78.50 & 5.5623 & -3.9224 & -3.7111 & -0.0149 & -0.0048 & -0.2164 & -5.5490 \\
 Drago et al. ~\cite{drago2003adaptive} & 67.52 & 83.81 & 8.3967 & -5.5248 & -4.0845 & -0.0280 & -0.0587 & -0.0054 & -3.3575 \\
-Mai et al. ~\cite{mai2011subjective} & 66.72 & 81.73 & 7.4594 & -4.0822 & -5.0859 & -0.0196 & -0.0532 & -0.0326 & -0.9064 \\
+Mai et al. ~\cite{mai2010optimizing} & 66.72 & 81.73 & 7.4594 & -4.0822 & -5.0859 & -0.0196 & -0.0532 & -0.0326 & -0.9064 \\
 Reinhard et al. (local) ~\cite{reinhard2002photographic} & 67.35 & 83.53 & 8.2123 & -5.6104 & -4.3743 & -0.0249 & -0.0290 & 0.0063 & -3.6705 \\
 Reinhard et al. (global) ~\cite{reinhard2002photographic} & 67.20 & 83.16 & 8.2162 & -5.3915 & -4.5828 & -0.0259 & -0.0264 & 0.0049 & -3.6673 \\
 Durand \& Dorsey~\cite{durand2002fast} & 66.81 & 82.61 & 8.2396 & -5.9298 & -4.0539 & -0.0560 & -0.0081 & 0.0077 & -3.1001 \\
-Mantiuk et al.~\cite{mantiuk2006backward} & 66.50 & 82.10 & 7.6833 & -4.3626 & -4.8232 & -0.0658 & -0.0212 & -0.0082 & -3.4889 \\
+Mantiuk et al.~\cite{mantiuk2006perceptual} & 66.50 & 82.10 & 7.6833 & -4.3626 & -4.8232 & -0.0658 & -0.0212 & -0.0082 & -3.4889 \\
 Reinhard \& Devlin~\cite{reinhard2005dynamic} & 66.56 & 82.61 & 8.5676 & -4.6656 & -4.9324 & -0.0936 & -0.0075 & -0.0262 & -2.8843 \\
 Fattal et al.~\cite{durand2002fast} & 67.07 & 82.79 & 8.0671 & -4.4119 & -4.8215 & -0.0716 & -0.0191 & -0.0141 & -2.8938 \\
-Mantiuk et al.~\cite{mantiuk2008modeling} & 66.57 & 82.01 & 7.7805 & -3.9872 & -5.3899 & -0.0228 & -0.0319 & -0.0084 & -2.6625 \\
+Mantiuk et al.~\cite{mantiuk2008display} & 66.57 & 82.01 & 7.7805 & -3.9872 & -5.3899 & -0.0228 & -0.0319 & -0.0084 & -2.6625 \\
 Ferradans et al.~\cite{ferradans2011analysis} & 67.33 & 83.16 & 8.5911 & -5.0432 & -4.9965 & -0.0541 & -0.0258 & -0.0089 & -2.3825 \\
 Pattanaik et al.~\cite{pattanaik2000time} & 64.94 & 79.84 & 6.6735 & -5.6657 & -3.4601 & 0.0109 & -0.0295 & 0.0241 & -1.8922
 \end{tabular}
-\end{sidewaystable}
+\end{table}
+\end{landscape}
