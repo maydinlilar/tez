@@ -29,11 +29,15 @@ On the contrary, there are a few TMOs that are designed to enable artistic freed
 
 Another algorithm that allows a wide range of possibilities during tone mapping is the generic TMO~\cite{Mantiuk08a}. This operator hinges on the idea that although a large number of TMOs exist, the majority of them can be modeled using a generic tone curve followed by local modifications. The authors have demonstrated that by using a small set of parameters, a skilled artist can match the output of any TMO with the generic TMO. Although these algorithms offer expressive freedom to the artist, they have no notion of \emph{learning} the artist's preference. In fact, it has been shown by the authors that the same set of parameters can give rise to vastly different outputs for different images~\cite{Mantiuk08a}. As such, using these operators to automatically tone map a large number of images is impractical. 
 
-Of most similar to our work are the LDR retouching studies that allow enhancing a new image using a set of previous training examples~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, their focus is not HDR image tone mapping.
+There are several LDR retouching studies that are similar to style based tone mapping in the sense of enhancing images by using a set of training images ~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, these studies do not focus on HDR image tone mapping.
+
+%There are several LDR retouching studies that allow enhancing a new image using a set of previous training examples~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, their focus is not HDR image tone mapping.
 
 Recently, deep neural networks are also used for learning image adjustment parameters. Some of these studies uses a training set of high quality images and learns the enhancement parameters in an unsupervised manner~\cite{park2018distort, chen2018deep,ignatov2018wespe}. These methods aim to enhance the general quality of the given image instead of applying a specific style. Yan et al.~\cite{yan2016automatic} on the other hand, proposes to learn a computational model of a style from image pairs, an untouched image and a stylized version. Their method incorporates high level semantic information of the pixels as well as local and global features of the image. Another study with a similar goal, Hu et al.~\cite{hu2018exposure} uses unpaired data, a set of stylized images, for learning an operation sequence that will style an input image when applied. The benefit of learning modification steps is it makes the style explainable, which most of the deep learning based image enhancements methods lack. While these methods aim to learn predefined style, Lee et al.~\cite{lee2016automatic} uses deep learning based semantic search to find similar images from a large collection and applies the styles of these images to the given image, by using a transfer function for color and luminance statistics, which brings the benefit of automatically selecting candidate styles. Similar to the previous LDR retouching studies, these methods also do not aim to tone map HDR images.
 
-To summarize, the primary difference of the current method from the earlier work is its ability to learn about the various tone mapping styles that may be desired by an artist from a small set of calibration images. These styles can then be applied when tone mapping a new HDR image. Our algorithm is the first of its kind that gives the ability to batch process a large number of HDR images with respect to different styles.
+In summary, style based tone mapping differs from the previous methods by means of learning different tone mapping styles from a small set of tone mapped calibration images. Then, new HDR images, which may be created from vastly different scenes, can be tone mapped according to these learnt styles. In this sense, style based tone mapping is the first method that allows to batch process a set of HDR images consistently with the selected style.
+
+%To summarize, the primary difference of the current method from the earlier work is its ability to learn about the various tone mapping styles that may be desired by an artist from a small set of calibration images. These styles can then be applied when tone mapping a new HDR image. Our algorithm is the first of its kind that gives the ability to batch process a large number of HDR images with respect to different styles.
 
 \section{Method}
 Style based tone mapping ~\cite{akyuz2013style} consists of two consecutive phases, namely \emph{calibration} and \emph{operation}. Calibration is the phase where the user defines a style and operation is the phase that the user given HDR image is tone mapped with the predefined style in the calibration phase. Figure \ref{fig:calibration_operation} shows the style based tone mapping algorithm steps and these steps are explained in detail in the following sections.
@@ -47,7 +51,7 @@ Style based tone mapping ~\cite{akyuz2013style} consists of two consecutive phas
 \end{figure}
 
 \subsection{Calibration}
-In the calibration phase, first the user is asked to pick a name for the new style to be created, and then the user is required to tone map a fixed set of calibration images. Assigning a name to the style would be helpful for the user to stay consistent with the style while tone mapping the calibration images and once the style is created and saved, will be helpful to have many predefined styles in preset library and reuse them. 
+In the calibration phase, first the user is asked to pick a name for the new style to be created, and then the user is required to tone map a fixed set of calibration images. Assigning a name to the style would be helpful for the user to stay consistent with the style while tone mapping the calibration images. Also, once the style is created and saved, it allows to have many predefined styles in preset library and reuse them. 
 
 Calibration images should be representative enough for different environments that has different characteristics and distinctive from each other to keep the number of the calibration images low. The number of calibration images directly affects the duration of the calibration phase, so although more calibration images would represent different environments better, in order not to overwhelm the user, the number of calibration images is chosen in a way that the user can finish the calibration phase in a reasonable time.
 
@@ -174,7 +178,7 @@ After tone mapping parameters are calculated with parameter interpolation, HDR i
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/chapter5/gallery.png}
+\includegraphics[width=\textwidth]{figures/chapter5/style_based/gallery_small.jpg}
 \caption{All of these images are automatically tone mapped using the four styles that are generated.}
 \label{fig:gallery}
 \end{center}
@@ -235,44 +239,47 @@ Other parameters are interpolated analogously. Because GIST and deep learning fe
 where $\mathbf{t_0}$ represents individually interpolated TMO parameters, $\mathbf{t_1}$ TMO parameters interpolated as a whole using GIST similarity only, and $\mathbf{t_2}$ TMO parameters interpolated as a whole using solely deep learning feature similarity. The weights control the influence of TMO parameters that are computed by using these different approaches.
 
 \section{Results}
-In Figure~\ref{FigStyle}, we compare several results obtained by using the original style based tone mapping method as well as with the modifications proposed above. In the first row, we show the results of
-the ``Paul Bunyan'' scene from the HDR Photographic Survey~\cite{fairchild2007hdr}. This scene depicts a bright outdoors environment with colorful foreground objects. It may be noted that all results are similar but the individual parameter interpolation with equally weighted GIST and deep learning features (d) has slightly higher contrast (please refer to Appendix~\ref{app:results}, high resolution images for better comparison). The overall \emph{candy} style is preserved in all images. In the second row, we show the ``Peppermill'' night scene from the same dataset. For this scene the difference of Version II is more clear as images in (c) and (d) exhibit a darker rendering, which is more suitable for a night scene. The reason for this darkening effect is that the $t_b$ parameter for tone mapping becomes more similar to the $t_b$ parameter of the night image in the calibration set due to the similarity of the \emph{luminance} features between these images. The addition of GIST and deep learning features in (d) yields a slightly brighter image compared to (c). Appendix~\ref{app:results} has higher resolution versions of the results for more clear observation of the differences.
+In Figure~\ref{FigStyle}, 
+we compare several results obtained by using the original style based tone mapping method as well as with the modifications proposed above. In the first row, we show the results of
+the ``Paul Bunyan'' scene from the HDR Photographic Survey~\cite{fairchild2007hdr}. This scene depicts a bright outdoors environment with colorful foreground objects. It may be noted that all results are similar but the individual parameter interpolation with equally weighted GIST and deep learning features (d) has slightly higher contrast (please refer to Appendix~\ref{app:results}, high resolution images for better comparison). 
+The overall \emph{candy} style is preserved in all images. In the second row, we show the ``Peppermill'' night scene from the same dataset. For this scene the difference of Version II is more clear as images in (c) and (d) exhibit a darker rendering, which is more suitable for a night scene. The reason for this darkening effect is that the $t_b$ parameter for tone mapping becomes more similar to the $t_b$ parameter of the night image in the calibration set due to the similarity of the \emph{luminance} features between these images. The addition of GIST and deep learning features in (d) yields a slightly brighter image compared to (c). Appendix~\ref{app:results} has higher resolution versions of the results for more clear observation of the differences.
+
 
 \begin{landscape}
 \begin{figure}
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v1.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v1_small.jpg}
     \caption{Original}
     \label{FigStyle:original_paul_bunyan}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v2.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v2_small.jpg}
     \caption{Version I}
     \label{FigStyle:VerI_paul_bunyan}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_1.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_1_small.jpg}
     \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
     \label{FigStyle:VerIIa_paul_bunyan}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.40\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_w1_w2.png}
+   \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_w1_w2_small.jpg}
     \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
     \label{FigStyle:VerIIb_paul_bunyan}
 \end{subfigure}\\
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v1.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v1_small.jpg}
     \caption{Original}
     \label{FigStyle:original_peppermill}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v2.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v2_small.jpg}
     \caption{Version I}
     \label{FigStyle:VerI_peppermill}
 \end{subfigure}\hfill
@@ -280,11 +287,11 @@ the ``Paul Bunyan'' scene from the HDR Photographic Survey~\cite{fairchild2007hd
     \centering
     \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_1.png}
     \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
-    \label{FigStyle:VerIIa_peppermill}
+   \label{FigStyle:VerIIa_peppermill}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.40\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_w1_w2.png}
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_w1_w2_small.jpg}
     \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
     \label{FigStyle:VerIIb_peppermill}
 \end{subfigure}\hfill

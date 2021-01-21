@@ -106,8 +106,8 @@
 % First committee member should be the chair of examining committee
 % Typically the chair is one of the highest ranked committee members
 % Ask your supervisor if you are not sure
-\committeememberi[assistprof]{Name Surname}
-\affiliationi{Computer Engineering, METU}
+\committeememberi[prof]{Tolga Kurtuluş Çapın}
+\affiliationi{Computer Engineering, TED University}
 % Second committee member is always your supervisor
 \committeememberii[prof]{Ahmet Oğuz Akyüz}
 \affiliationii{Computer Engineering, METU}
@@ -123,33 +123,36 @@
 \committeememberiii[prof]{Mine Özkar}
 \affiliationiii{Architecture, ITU}
 % Fourth committee member
-\committeememberiv[prof]{Tolga Kurtuluş Çapın}
-\affiliationiv{Computer Engineering, TED University}
+
 % Fifth committee member
-\committeememberv[assocprof]{Sinan Kalkan}
+\committeememberiv[assocprof]{Sinan Kalkan}
+\affiliationiv{Computer Engineering, METU}
+% Fifth committee member
+\committeememberv[assistprof]{Gökberk Cinbiş}
 \affiliationv{Computer Engineering, METU}
 %
 % Keywords : English & Turkish, Comma seperated
-\keywords{keywords, seperated, with, comma}
-\anahtarklm{virgülle, ayrılmış, anahtar, kelimeler}
+\keywords{HDR Imaging, HDR Image Similarity, HDR Tone mapping}
+\anahtarklm{YDA Görüntüleme, YDA İmge benzerliği, YDA Ton Eşlemesi}
 %
 % Abstract in English
 %
 \abstract{
-Assessing visual similarity for low dynamic range (LDR) images is an extensively studied problem. Promising results are obtained when an image database is queried to find the images containing a specific object of interest, a task known as exact matching. However, this problem becomes more difficult if one needs approximate similarity, which is the task of determining images that are merely visual similar to a query image. In this study, the aim ıs to shed light on this problem with an experimental approach. To this end, first crowd-sourcing data is collected through a novel web-based experimental interface, in which the participants assess the visual similarity of HDR images. Then, a set of features collected to assess how well they correlate with the participants responses. Features computed by convolutional neural networks are also included, which are proven to be successful in standard similarity tasks. The correlation of each feature with the crowdsourcing data is computed, first in isolation, and then merging multiple features by using different weights for each feature determined through a metric learning approach. Based on the obtained results, a style-based tone mapping algorithm is proposed that can successfully impart a user-defined style to various HDR images determined to be similar with respect to the proposed metric.
+Assessing visual similarity for low dynamic range (LDR) images is an extensively studied problem. Promising results are obtained when an image database is queried to find the images containing a specific object of interest, a task known as image retrieval. However, this problem becomes more difficult if one needs approximate similarity, which is the task of determining images that are merely visual similar to a query image. In this study, the aim is to shed light on this problem with an experimental approach. To this end, first crowd-sourcing data is collected through a novel web-based experimental interface, in which the participants assess the visual similarity of HDR images. After, a set of features collected to assess how well they correlate with the participants responses. Features computed by convolutional neural networks are also included, which are proven to be successful in standard similarity tasks. The correlation of each feature with the crowdsourcing data is computed, first in isolation, and then merging multiple features by using different weights for each feature determined through a metric learning approach. Based on the obtained results, a style-based tone mapping algorithm is proposed that can successfully impart a user-defined style to various HDR images determined to be similar with respect to the proposed metric.
 }
 %
 % Turkish Abstract
 %
 \oz{
-Çok çeşitli amaçlarla kullanılmak üzere standard imgelerin benzerliğini belirleyen bir çok algoritma bulunmasına rağmen YDA imgeler için yapılmış çalışma sayısı oldukça azdır. Teknolojinin gelişmesiyle birlikte YDA imgelerin benzerliğinin objektif bir biçimde değerlendirilmesi önem kazanacaktır. Bu sebeple, imgelerin benzerliklerini ölçmede etkili olacağını düşündüğümüz, imgelerin alt ve orta seviye özelliklerini ve uzaklık metriklerini öne sürüyoruz. Yaptığımız kullanıcı deneyi ile subjektif benzerlik skorları elde edilmiştir ve önerilen özelliklerin bu skorlarla olan korelasyonu değerlendirilmiştir. Daha sonra, bu özelliklerin çeşitli ağırlıklarla oluşturulan kombinasyonunun her bir özellikle tek tek elde edilen sonuçlardan daha başarılı sonuç verdiği gözlenmiştir. Geliştirilen tekniğin bir uygulaması olarak YDA imgelerin standard imgelere dönüştürülmesi probleminde imgeler arası benzerliğin kullanılmasının etkisi gösterilmiştir. 
+Standard imgeler üzerinde imge benzerliği literatürde oldukça çalışılmış bir konudur. Özellikle bir objenin imge veritabanında sorgulanması ve bu objeyi içeren imgelerin bulunması konusunda oldukça başarılı çalışmalar bulunmaktadır. Ancak, imgeler arasında genel bir benzerlik ölçütü oluşturmak ve bu ölçüte göre verilen bir imgeye benzer imgeleri sıralamak problemi daha zor bir hale getirmektedir. Bu çalışmada, bahsedilen problemin çözümüne deneysel bir şekilde yaklaşılmıştır. Bu amaçla, kullanıcıların YDA imgelerin benzerliklerini değerlendirmelerine olanak veren web tabanlı bir deney arayüzü oluşturulmuş ve internet üzerinden ulaşılan yüksek sayıda kullanıcıdan veri toplanmıştır. Daha sonra bir grup imge özniteliğinin kullanıcı verisiyle korelasyonu değerlendirilmiştir. Standard benzerlik çalışmalarında başarılı sonuçlar veren derin öğrenme tabanlı öznitelikler de bu kapsamda değerlendirilmiştir. Bu özniteliklerin öncelikle tek tek, daha sonra bu özniteliklerin kullanıcı verisiyle biçilen ağırlıklarla birleştirilmesiyle oluşturulan özniteliğin korelasyonu incelenmiştir. Geliştirilen tekniğin bir uygulaması olarak YDA imgelerinin belirli bir stilde standard imgelere dönüştürülme probleminde imgeler arasındaki benzerliklerinden faydalanılarak başarılı sonuçlar elde edildiği gösterilmiştir.
+%Muhtelif amaçlarla kullanılmak üzere standard imgelerin benzerliğini belirleyen bir çok algoritma bulunmasına rağmen YDA imgeler için yapılmış çalışma sayısı oldukça azdır. Teknolojinin gelişmesiyle birlikte YDA imgelerin benzerliğinin objektif bir biçimde değerlendirilmesi önem kazanacaktır. Bu sebeple, imgelerin benzerliklerini ölçmede etkili olacağını düşündüğümüz, imgelerin alt ve orta seviye özniteliklerini ve bu özniteliklere özgü uzaklık metriklerini öne sürüyoruz. Yaptığımız kullanıcı deneyi ile subjektif benzerlik skorları elde edilmiştir ve önerilen özelliklerin bu skorlarla olan korelasyonu değerlendirilmiştir. Daha sonra, bu özelliklerin çeşitli ağırlıklarla oluşturulan kombinasyonunun her bir özellikle tek tek elde edilen sonuçlardan daha başarılı sonuç verdiği gözlenmiştir. Geliştirilen tekniğin bir uygulaması olarak YDA imgelerin belirli bir stilde standard imgelere dönüştürülmesi probleminde imgeler arası benzerliğin kullanılmasının etkisi gösterilmiştir. 
 } 
 %
-% Dedication 
-\dedication{Lorem ipsum dolor sit amet}
+% Dedication [!]
+\dedication{}
 %
 %
-% Acknowledgements   
+% Acknowledgements [!]   
 \acknowledgments{}
 
 %

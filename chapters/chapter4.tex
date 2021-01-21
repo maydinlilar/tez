@@ -3,7 +3,7 @@
 Having discussed the details of crowdsourcing study in Chapter \ref{chp:b3} and experimented features in Section \ref{sec:features}, this chapter explains how the human judgments and image features are related. First analysis method for assessing the correlation between individual feature type and the experiment results is given. Then, two possible methods to combine the features for developing a more effective similarity model is discussed. In the evaluations, different formats for HDR images are employed in order to measure the effect of the formats of the image format to the proposed methods. 
 
 \section{Preprocessing}
-In evaluations, HDR images used directly, as well as by linear scaling and applying several tone mapping operators. For linear scaling, 5\% of the brightest pixels and 5\% of the darkest pixels are discarded by setting them to 95th and 5th percentile of the pixels values respectively. The reason behind this step is to eliminate outlier values from the HDR images that may also introduced by hardware. 
+In evaluations, HDR images used directly, as well as by linear scaling and applying several tone mapping operators. For linear scaling, 5\% of the brightest pixels and 5\% of the darkest pixels are discarded by setting them to 95th and 5th percentile of the pixels values respectively. The reason behind this step is to eliminate extreme values from the HDR images that may also introduced by hardware. 
 
 \begin{equation}
     I' = \begin{cases}
@@ -26,7 +26,7 @@ Besides of using original and linearly scaled HDR images, tone mapped version of
 
 \section{Individual Feature Correlation}
 %paper
-Assume that $t_i = R_i-A_i-B_i$ represents the $i^{th}$ triplet (i.e. trial) with $R_i$ being the reference image, $A_i$ the left test image, and $B_i$ the right test image. This triplet could have been evaluated one or more times by different observers. Let $n(A_i)$ and $n(B_i)$ represent the number of times that each image was found more similar to $R_i$ than the other. From this information, we created a binary vector to encode the participants’ responses:
+Assume that $t_i = R_i-A_i-B_i$ represents the $i^{th}$ triplet (i.e. trial) with $R_i$ being the reference image, $A_i$ the left test image, and $B_i$ the right test image. This triplet could have been evaluated one or more times by different observers. Let $n(A_i)$ and $n(B_i)$ represent the number of times that each image was found more similar to $R_i$ than the other. From this information, a binary vector is created to encode the participants’ responses:
 \begin{equation}
 \label{eq:p_vector}
 P = (x_1, \ldots, x_N),
@@ -40,7 +40,7 @@ x_i = \begin{cases}
 \end{cases}
 \end{equation}
 
-For each feature type $f$, we also computed the feature representations of each image as $f(R_i)$, $f(A_i)$, $f(B_i)$ and computed their similarity to each other to obtain the following binary vector:
+For each feature type $f$, the feature representations of each image is computed as $f(R_i)$, $f(A_i)$, $f(B_i)$. Then their similarity to each other is calculated to obtain the following binary vector:
 \begin{equation}
     F = (y_1,\cdots, y_N ),
 \end{equation}
@@ -52,7 +52,7 @@ y_i = \begin{cases}
 \end{cases}
 \end{equation}
 
-In this equation $d$ represents the distance metric that was chosen to be used for feature $f$. This encoding gave rise to two binary vectors, $P$ and $F$, with the former computed from user responses and the latter from feature similarities. There are many approaches to compute the correlation between two such vectors. We used the Sokal-Michener correlation, which is a simple, intuitive, and effective way to correlate two binary vectors~\cite{zhang2003properties}. This correlation is defined as
+In this equation $d$ represents the distance metric that was chosen to be used for feature $f$. This encoding gave rise to two binary vectors, $P$ and $F$, with the former computed from user responses and the latter from feature similarities. There are many approaches to compute the correlation between two such vectors. In this study, the Sokal-Michener correlation is used, which is a simple, intuitive, and effective way to correlate two binary vectors~\cite{zhang2003properties}. This correlation is defined as
 
 \begin{equation}
 s = {{S_{11}(P, F) + S_{00}(P, F)} \over {N}},
@@ -66,7 +66,7 @@ with $S_{11}$ and $S_00$ representing the total count of matching ones and zeros
 \end{align}
 
 
-Note that the correlation coefficient s can take a value in range [0, 1]. In the following, we multiply this coefficient by 100 to represent the correlations as percentages.
+Note that the correlation coefficient s can take a value in range [0, 1]. In the following, this coefficient is multiplies by 100 to represent the correlations as percentages.
 
 The raw feature correlations with the first (Section \ref{sec:exp_phase_I}) and the second phase of the experiment (Section \ref{sec:exp_phase_II}) are reported in Tables \ref{tab:ind_correlation_p1} and \ref{tab:ind_correlation_p2}, respectively. In these tables, the leftmost column indicates the processing type applied to the images before the computation of features.
 
@@ -122,11 +122,30 @@ Pattanaik et al.~\cite{pattanaik2000time} & 78.66 & 78.11 & 57.33 & 58.66 & 55.7
 
 “HDR-original” represents the unaltered HDR image whereas “HDR-linear” represents its linearly scaled version. The other processing types all include the application of a certain tone mapping operator. For all processing types, except the original, the images were gamma-corrected and scaled to [0, 255] range.
 
+In Table~\ref{tab:p_individual}, the statistical significance of the difference between each individual feature correlations are given. Fisher's exact test~\cite{fisher1922interpretation} is used for the calculations and image features are calculated on images tone mapped with Ferradans et al.~\cite{ferradans2011analysis} TMO. This analysis shows that, the difference for the correlations of VGG16 and VGG19 features are not that significant and also Color - Luminance - Texture performances are rather close. On the other hand, deep learning features are significantly better than the other features and similarly, GIST feature is significantly better than Color and Texture features.
+
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}{c | c c c c c c}
+ &VGG16& VGG19& Color& Luminance& Texture & GIST \\
+\hline
+VGG16 & $1.0$ & $0.504$ & $3.832x10^{-62}$ &$1.123x10^{-47}$ &$4.828x10^{-79}$ &$1.963x10^{-33}$ \\
+VGG19 & $0.504$ & $1.0$ & $3.083x10^{-67}$ & $3.670x10^{-52}$ & $9.416x10^{-85}$ &$3.302x10^{-37}$ \\
+Color & $3.832x10^{-62}$ &$3.083x10^{-67}$ &$1.0$ &$0.033$ &$0.027$ &$3.720x10^{-06}$ \\
+Luminance & $1.123x10^{-47}$ &$3.670x10^{-52}$ &$0.033$ &$1.0$ &$1.222x10^{-05}$ &$0.014$ \\
+Texture & $4.828x10^{-79}$ &$9.416x10^{-85}$ &$0.027$ &$1.222x10^{-05}$ &$1.0$ &$6.947x10^{-12}$ \\
+GIST &$1.963x10^{-33}$ &$3.302x10^{-37}$ &$3.720x10^{-06}$ &$0.014$ &$6.947x10^{-12}$ &$1.0$  
+\end{tabular}}
+\caption{$p$ values for statistical significance between individual image features, calculated with Fisher's exact test.}
+\label{tab:p_individual}
+\end{table}
+
 \section{Combined Feature Correlation}
 
-Given the individual correlations reported in the previous tables, a natural question that follows is if we can combine them to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, we performed two types of linear regression analysis yielding two related but different models.
+Given the individual correlations reported in the previous tables, a natural question that follows is if they can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of linear regression analysis are performed yielding two related but different models.
 
-In both models, closely related deeply learned features VGG16 and VGG19 used as separate features instead of selecting the better performing one. The reason behind this, as the study~\cite{simonyan2014very} suggests, the results obtained from combination of VGG16 and VGG19 (by taking an average) performs better than both VGG16 and VGG19, indicates that VGG16 and VGG19 are complementary features. This claim is consistent with our results given Table \ref{tab:fuse_vgg_phaseI} and \ref{tab:fuse_vgg_phaseII}.
+In both models, closely related deeply learned features VGG16 and VGG19 used as separate features instead of selecting the better performing one. The reason behind this, as the study~\cite{simonyan2014very} suggests, the results obtained from combination of VGG16 and VGG19 (by taking an average) performs better than both VGG16 and VGG19, indicates that VGG16 and VGG19 are complementary features. This claim is consistent with our results given Table \ref{tab:fuse_vgg_phaseI} and \ref{tab:fuse_vgg_phaseII}, although the improvement is not high.
 
 \begin{table}
 \caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase I of the experiment.}
@@ -176,8 +195,7 @@ Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
 
 \subsection{Triplet Model}
 %paper
-In our first analysis, we aimed to develop a model that
-predicts which of the two test images is more similar to the reference image using the pairwise distances between the test and reference images. Assuming that j is a feature index, one can compute these pairwise differences as follows:
+In the first analysis, the aim is to develop a model that predicts which of the two test images is more similar to the reference image using the pairwise distances between the test and reference images. Assuming that j is a feature index, one can compute these pairwise differences as follows:
 \begin{align}
     a_j &= d_j(f_j(R), f_j(A)), \\
    b_j &= d_j(f_j(R), f_j(B)). 
@@ -190,11 +208,11 @@ Here $d_j$ represents the distance metric chosen for the $j^{th}$ feature. The m
 \end{equation}
  
 
-To compute the unknown coefficients we used logistic regression as our dependent data (i.e. user responses)
-were binary: given one reference and two test images, the user selects either the left image or the right one,
+To compute the unknown coefficients logistic regression is used as the dependent data (i.e. user responses)
+is binary: given one reference and two test images, the user selects either the left image or the right one,
 encoded as 1 and 0.
 
-The regression was performed between the two vectors, namely the $P$ vector from Equation \ref{eq:p_vector}, and the model response $R$ comprised of the following elements:
+The regression is performed between the two vectors, namely the $P$ vector from Equation \ref{eq:p_vector}, and the model response $R$ comprised of the following elements:
 \begin{equation}
     R = (r_1,\cdots, r_N ),
 \end{equation}
@@ -209,18 +227,16 @@ The logistic regression models the logarithm of the odds as the response of the 
 \end{equation}
 
 
-From this equation, it can be derived that the probability of a user responding 1 (i.e. selecting the left image)
-is equal to
+From this equation, it can be derived that the probability of a user responding 1 (i.e. selecting the left image) is equal to
 
 \begin{equation}
 \label{eq:response_prob}
     Pr(x = 1) = {{1} \over {1 + e^{-r}}}
 \end{equation}
 
-If we find $Pr(x = 1) > 0.5$, we assume that the model has selected the left image. Otherwise, the model’s response was taken as the right image.
+If $Pr(x = 1) > 0.5$, it is assumed that the model has selected the left image. Otherwise, the model’s response was taken as the right image.
 
-To measure the effectiveness of this model we used 10-fold cross validation. In each fold, 90\% of the trials
-were selected for training and the remaining 10\% for testing. This process was repeated 10 times while ensuring that each test fold is mutually exclusive from each other. Similar to the analysis of individual features, we assessed the success of this model against both the Phase I and the Phase II of the experiment. The results are shown in Table \ref{tab:correlation_triplet_model}. It can be seen that the feature combination, on average, improves the success of each presentation type by about 3\% to 4\%. The best three results are obtained by Ferradans et al.’s~\cite{ferradans2011analysis}, Drago et al.’s ~\cite{drago2003adaptive}, and Reinhard et al.’s ~\cite{reinhard2002photographic} TMO algorithms. The reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+To measure the effectiveness of this model 10-fold cross validation is used. In each fold, 90\% of the trials were selected for training and the remaining 10\% for testing. This process was repeated 10 times while ensuring that each test fold is mutually exclusive from each other. Similar to the analysis of individual features, the success of this model is assessed against both the Phase I and the Phase II of the experiment. The results are shown in Table \ref{tab:correlation_triplet_model}. It can be seen that the feature combination, on average, improves the success of each presentation type by about 3\% to 4\%. The best three results are obtained by Ferradans et al.’s~\cite{ferradans2011analysis}, Drago et al.’s ~\cite{drago2003adaptive}, and Reinhard et al.’s ~\cite{reinhard2002photographic} TMO algorithms. The reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
 \begin{landscape}
 \begin{table}
@@ -254,7 +270,7 @@ Pattanaik et al.~\cite{pattanaik2000time} & 65.02 & 79.89 & -0.0365 & -7.5194 & 
 Despite the first regression model yielding high correlations exceeding 80\% for most algorithms, it has an important drawback. It requires a triplet of images, one reference and two test, as input to the model. While this matches the presentation type in our experiment, a more desirable model should be able to take only two images (e.g., a query image and a test image) and produce a relative similarity score between them. This may allow, for instance, ranking the similarity of multiple images with a query image as in image-based search applications.
 
 In order to allow for this possibility, our second regression model was designed in the following manner.
-For each trial, $ti = R_i - A_i - B_i, i \in {1, \cdots , N}$, we inserted two elements to our user response vector:
+For each trial, $ti = R_i - A_i - B_i, i \in {1, \cdots , N}$, two elements are inserted to our user response vector:
 \begin{align}
     x_{2i-1} &= \begin{cases} 
     1, &\text{ if $n(A_i) > n(Bi)$ } \\
@@ -288,14 +304,14 @@ In summary, the elements of the feature vector always followed the A, B order, w
     r_a = c_0 + c_1a_1 + c_2a_2 + c_3a_3 + c_4a_4 + c_5a_5 + c_6a_6 
 \end{equation}
 
-By converting this response to probability values as in Equation \ref{eq:response_prob}, one can compute a relative degree of similarity between the two images. To validate this model, we computed the model response twice by using $R_i - A_i$ and $R_i - B_i$ image pairs:
+By converting this response to probability values as in Equation \ref{eq:response_prob}, one can compute a relative degree of similarity between the two images. To validate this model, the model response is computed twice by using $R_i - A_i$ and $R_i - B_i$ image pairs:
 \begin{align}
     Pr(x = left) &= {{1} \over {1 + e^{-r_a}}} \\
     Pr(x = right) &= {{1} \over {1 + e^{-r_b}}}
 \end{align}
 
 
-Given a triplet, if we found $Pr(x = left) > Pr(x =right)$ we assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s ~\cite{drago2003adaptive} TMO in the extended experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+Given a triplet, if $Pr(x = left) > Pr(x =right)$ it is assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s ~\cite{drago2003adaptive} TMO in the extended experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
 \begin{landscape}
 \begin{table}
