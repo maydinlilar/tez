@@ -7,7 +7,7 @@ Traditionally, image similarity is measured by measuring the distance between ha
 
 The similarity between deep learning features can be calculated directly with euclidean or cosine distance without any learning, or can be learned. \cite{frome2007image}, \cite{mcfee2010metric}, \cite{liang2016optimizing} and  OASIS\cite{chechik2010large} are famous similarity learning techniques, that can be classified linear metric learning. These works proposed to work on hand-crafted image features but shown in \cite{wan2014deep} that can also work with deep features. The second group of metric learning is nonlinear metric learning methods, that learn similarity metric directly with deep neural network architectures\cite{pinheiro2018unsupervised}. Siamese\cite{chopra2005learning}\cite{bell2015learning} and triplet\cite{wang2014learning} \cite{arandjelovic2016netvlad} architectures minimizes the classification loss function while a more recent study \cite{garcia2019learning} proposes similarity network architecture to obtain similarity score by minimizing a ranking loss function.
 
-One major drawback of using DCNNs is the need for using very large labeled datasets for training, which is difficult to obtain or not available at all for most problem domains. Transfer learning~\cite{yosinski2014transferable} aims to solve this problem by using pretrained networks on large scale datasets such as ImageNet~\cite{russakovsky2015imagenet}. The basic method is to give the images to the pre-trained network and use the output of the last fully connected layers as feature vectors~\cite{donahue2014decaf,wan2014deep} -- an approach that is also adopted in this study.
+One major drawback of using DCNNs is the need for using very large labeled datasets for training, which is difficult to obtain or not available at all for most problem domains. Transfer learning~\cite{yosinski2014transferable} aims to solve this problem by using pretrained networks on large scale datasets such as ImageNet~\cite{russakovsky2015imagenet}. The basic method is to give the images to the pre-trained network and use the output of the last fully connected layers as feature vectors~\cite{donahue2014decaf,wan2014deep} -- an approach that is also adopted in this thesis.
 
 Visual similarity is a perceptual phenomenon without ground-truth data. This makes collecting data using crowdsourcing experiments valuable. Indeed, there are several crowdsourcing-based works~\cite{lun2015elements,saleh2015learning,kleiman2016toward} that address shape or style similarity problems and conduct user experiments to either derive or validate models. 
 
@@ -22,12 +22,12 @@ The need for HDR imaging was realized for the first time in computer graphics to
 While HDR imaging has long been an active field of research, recent developments in HDR imaging~\cite{Rein2010,Banterle2011,chalmers2016high}, in particular those pertaining to HDR image and video capture~\cite{tocci2011versatile,froehlich2014creating} and display systems~\cite{seetzen2004high}, and HDR
 video streaming standards~\cite{standard2016dynamic} to allow direct rendition of HDR images will likely make HDR images more ubiquitous in the near future. However, despite the practical improvements in the field, there is also a need for fundamental and experimental research that explores various aspects related to HDR imaging and dynamic range. Hanhart et al. investigated the performance of various objective metrics in quantifying visual distortions of HDR images commensurate with subjective opinions~\cite{hanhart2015benchmarking}. The authors found HDR-VDP-2~\cite{mantiuk2011hdr} and HDR-VQM~\cite{narwaria2015hdr} to be the best predictors of visual quality. In another study, Grimaldi et al. investigated how image statistics change as a function of dynamic range and found that there are indeed differences between HDR and LDR images~\cite{grimaldi2019statistics}. The authors, also found, however, that the majority of these differences are accounted for by the early visual processing that takes place in the human visual system. However, these works do not consider the HDR image similarity problem.
 
-As mentioned above, although visual image similarity is an extensively studied subject~\cite{liu2007survey}, to our knowledge there is no study that directly addresses this problem for HDR images. Thus, understanding the nature of image similarity for HDR images and developing an objective similarity measure is the primary goal of this study. 
+As mentioned above, although visual image similarity is an extensively studied subject~\cite{liu2007survey}, to our knowledge there is no study that directly addresses this problem for HDR images. Thus, understanding the nature of image similarity for HDR images and developing an objective similarity measure is the primary goal of this thesis. 
 
-\subsection{Tone mapping}
+\subsection{Tone Mapping}
 HDR images can capture the true dynamic range of a scene by using wider representations compared to standard 8 bit images. However, in order to display or print HDR images on conventional devices, the dynamic range of the image should be compressed to match the dynamic range of the device. This operation, namely tone mapping, aims to compress the dynamic range while keeping the visual appearance intact. 
 
-Tone mapping is an extensively studied research area and there are many tone mapping operators~\cite{Rein2010}. In this study, to investigate the effect of tone mapping operators to visual similarity, eleven commonly used tone mapping operators are selected. Basically, these tone mapping operators can be divided into three categories depending on their operation domain: global and local operators in spatial domain, and gradient domain operators~\cite{Rein2010}. 
+Tone mapping is an extensively studied research area and there are many tone mapping operators~\cite{Rein2010}. In this thesis, to investigate the effect of tone mapping operators to visual similarity, eleven commonly used tone mapping operators are selected. Basically, these tone mapping operators can be divided into three categories depending on their operation domain: global and local operators in spatial domain, and gradient domain operators~\cite{Rein2010}. 
 
 Global tone mapping operators apply the same non-linear function to all luminance values without considering pixel neighbourhood. This makes these operators fast compared to other tone mapping operators however, they may result with contrast loss in dark and bright regions. Reinhard et al.~\cite{reinhard2002photographic} introduces a transfer function that compresses low luminance values less and high luminance values more. Drago et al. \cite{drago2003adaptive} uses logarithmic compression for tone mapping while adaptively changing the logarithm base depending on the luminance value. A global algorithm is proposed by Pattanaik et al.~\cite{pattanaik2000time}, which takes in to account the illumination adaptation time of HSV. Other global methods that model photoreceptors of HVS is the work from Reinhard \& Devlin ~\cite{reinhard2005dynamic} and Ferradans et al.~\cite{ferradans2011analysis}. Mantiuk et al. ~\cite{mantiuk2008display} models the display as well as HSV. On the other hand, Mai et al.~\cite{mai2010optimizing} proposed a TMO that minimizes the mean square error between the input HDR and the result of inverse tone mapping.
 
@@ -39,7 +39,7 @@ There are also TMOs that operate on gradient domain rather than the spatial doma
 \section{Features}
 \label{sec:features}
 %paper
-In this study, five kinds of features are used to model HDR images: color, luminance, texture, GIST, and DCNN features. Table \ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. The following sections outline the details of these features and the corresponding distance metrics. In the user experiment analysis, the HDR images are tone mapped with these operators.
+In this thesis, five kinds of features are used to model HDR images: color, luminance, texture, GIST, and DCNN features. Table \ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. The following sections outline the details of these features and the corresponding distance metrics. In the user experiment analysis, the HDR images are tone mapped with these operators.
 
 \begin{table}
 \caption{HDR Image features and distances}
@@ -60,7 +60,7 @@ VGG16/VGG19 - fc7 & Fused fc7 layer & Cosine distance
 %paper
 \subsection{Color}
 %paper
-Since the early days of the image similarity research, color has been used as one of the most discriminative cues~\cite{neumann2006image}. In this study,  we used the $a$ and $b$ channels of the CIELAB color space~\cite{iso201111664} to represent chromaticity information. This is an opponent color space, where the $a$ channel represents red/green opponent colors and the $b$ channel yellow/blue opponent colors. We used a 2D chromaticity histogram to represent the distribution of colors in a given image. Each dimension contained $15$ bins for a total of $225$ bins.  Figure~\ref{fig:hists} shows this histogram for the Mason Lake image from the
+Since the early days of the image similarity research, color has been used as one of the most discriminative cues~\cite{neumann2006image}. In this thesis,  we used the $a$ and $b$ channels of the CIELAB color space~\cite{iso201111664} to represent chromaticity information. This is an opponent color space, where the $a$ channel represents red/green opponent colors and the $b$ channel yellow/blue opponent colors. We used a 2D chromaticity histogram to represent the distribution of colors in a given image. Each dimension contained $15$ bins for a total of $225$ bins.  Figure~\ref{fig:hists} shows this histogram for the Mason Lake image from the
 dataset~\cite{fairchild2007hdr}.
 
 \begin{figure}
@@ -93,7 +93,7 @@ The procedure for extracting GIST descriptors consists of applying Gabor filters
 \subsection{Deeply Learned Features}
 %paper
 Recently, DCNNs have started to dominate object recognition and image classification tasks, achieving near human success rates~\cite{krizhevsky2012imagenet,simonyan2014very,zhou2017scene}. These models are trained with large prelabeled datasets and develop a hierarchical model that becomes more aware of the content of the image rather than the underlying pixel values. To our knowledge currently there is no DCNN model that is trained on HDR images for the purpose of image indexing, scene classification, or visual similarity tasks.
-Furthermore, there is no prelabeled large HDR image dataset to use for training a DCNN model from scratch. Therefore in this study, we used transfer learning method to employ pretrained DCNNs for our perceptual similarity problem. 
+Furthermore, there is no prelabeled large HDR image dataset to use for training a DCNN model from scratch. Therefore in this thesis, we used transfer learning method to employ pretrained DCNNs for our perceptual similarity problem. 
 
 For feature extraction, pretrained AlexNet~\cite{krizhevsky2012imagenet} and two variants of VGG networks, VGG16 and VGG19, are used~\cite{simonyan2014very}. All networks are trained on the ImageNet~\cite{russakovsky2015imagenet} dataset, but we also evaluated their performance when trained using different datasets. For transfer learning, the last fully connected layer, which contains classification outputs, is removed and the remaining $4096$ dimensional two fully connected layers, \textbf{fc6} and \textbf{fc7}, are used as feature vectors. As suggested by Simonyan and Zisserman~\cite{simonyan2014very}, the results obtained from VGG16 and VGG19 are fused (by taking an average) and it is observed that the fused version performs better than both VGG16 and VGG19. The distance between the feature vectors are calculated using cosine distance, which is a commonly used distance metric for deep learning features. 
 
@@ -137,19 +137,9 @@ where dij is the ground distance between cluster centers i and j. The optimal fl
 \begin{equation}
 EMD(p,q) = {{\sum \sum d_{ij}f_{ij}}\over{\sum \sum f_{ij}}}.
 \end{equation}
-In our problem, bin centers correspond to color values
-(ab values in the CIELAB space) and ground distances
-are calculated as Euclidean because of the perceptual
-uniformity of the CIELAB color space.
+In our problem, bin centers correspond to color values (ab values in the CIELAB space) and ground distances are calculated as Euclidean because of the perceptual uniformity of the CIELAB color space.
 
-Figure \ref{fig:sim_comp} compares the effect of these three distance
-metrics for a sample image from the dataset. The image
-on the first column is the query image, and in each row,
-the most similar five images from the dataset are shown.
-The distance metric used in first row is Euclidean, the
-second row is Bhattacharyya, and the last row is the
-EMD. It can be argued that more similar images are
-found using the EMD metric.
+Figure \ref{fig:sim_comp} compares the effect of these three distance metrics for a sample image from the dataset. The image on the first column is the query image, and in each row, the most similar five images from the dataset are shown. The distance metric used in first row is Euclidean, the second row is Bhattacharyya, and the last row is the EMD. It can be argued that more similar images are found using the EMD metric.
 
 \begin{figure} 
 \centering
@@ -166,4 +156,4 @@ Cosine distance between two vectors $p$ and $q$ is calculated as:
 \begin{equation}
 dist_{cosine}(p,q) = 1 - {{\sum_{i=1}^{n}p_{i}q_{i}} \over {\sqrt{\sum_{i=1}^{n}p_{i}^2}} \sqrt{\sum_{i=1}^{n}q_{i}^2}} 
 \end{equation}
-Cosine distance is a widely used distance metric for deep representations. In this study, we used cosine distance for calculating the distances between CNN feature vectors and GIST features.
+Cosine distance is a widely used distance metric for deep representations. In this thesis, we used cosine distance for calculating the distances between CNN feature vectors and GIST features.

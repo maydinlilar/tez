@@ -24,9 +24,8 @@ for each color channel separately.
 Besides of using original and linearly scaled HDR images, tone mapped version of the images are also evaluated. For this purpose commonly used tone mapping operators Mai et al. ~\cite{mai2010optimizing}, Reinhard et al. (local) ~\cite{reinhard2002photographic}, Reinhard et al. (global) ~\cite{reinhard2002photographic}, Durand \& Dorsey~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2006perceptual}, Reinhard \& Devlin~\cite{reinhard2005dynamic}, Fattal et al.~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2008display}, Ferradans et al.~\cite{ferradans2011analysis} and Pattanaik et al.~\cite{pattanaik2000time} are used. The implementations of these TMOs are available in opensource PFStmo software library ~\cite{mantiuk2007high}, which provides a reliable implementation of several commonly used TMOs. The images in the experiment dataset are tone mapped using the PFStmo software with the given TMOs using the default parameters.
 
 
-\section{Individual Feature Correlation}
-%paper
-Assume that $t_i = R_i-A_i-B_i$ represents the $i^{th}$ triplet (i.e. trial) with $R_i$ being the reference image, $A_i$ the left test image, and $B_i$ the right test image. This triplet could have been evaluated one or more times by different observers. Let $n(A_i)$ and $n(B_i)$ represent the number of times that each image was found more similar to $R_i$ than the other. From this information, a binary vector is created to encode the participants’ responses:
+\section{Individual Feature Correlations}
+To investigate how individual image features correlate with the human responses collected through the experiment, the feature responses are treated as an observer that are given the same set image triplets used in the experiment. Assume that $t_i = R_i-A_i-B_i$ represents the $i^{th}$ triplet (i.e. trial) with $R_i$ being the reference image, $A_i$ the left test image, and $B_i$ the right test image. This triplet could have been evaluated one or more times by different human observers. Let $n(A_i)$ and $n(B_i)$ represent the number of times that each image was found more similar to $R_i$ than the other. From this information, a binary vector is created to encode the participants’ responses:
 \begin{equation}
 \label{eq:p_vector}
 P = (x_1, \ldots, x_N),
@@ -52,13 +51,13 @@ y_i = \begin{cases}
 \end{cases}
 \end{equation}
 
-In this equation $d$ represents the distance metric that was chosen to be used for feature $f$. This encoding gave rise to two binary vectors, $P$ and $F$, with the former computed from user responses and the latter from feature similarities. There are many approaches to compute the correlation between two such vectors. In this study, the Sokal-Michener correlation is used, which is a simple, intuitive, and effective way to correlate two binary vectors~\cite{zhang2003properties}. This correlation is defined as
+In this equation $d$ represents the distance metric that was chosen to be used for feature $f$. This encoding gave rise to two binary vectors, $P$ and $F$, with the former computed from user responses and the latter from feature similarities. There are many approaches to compute the correlation between two such vectors. In this thesis, the Sokal-Michener correlation is used, which is a simple, intuitive, and effective way to correlate two binary vectors~\cite{zhang2003properties}. This correlation is defined as
 
 \begin{equation}
 s = {{S_{11}(P, F) + S_{00}(P, F)} \over {N}},
 \end{equation}
 
-with $S_{11}$ and $S_00$ representing the total count of matching ones and zeros respectively:
+with $S_{11}$ and $S_{00}$ representing the total count of matching ones and zeros respectively:
 
 \begin{align}
     S_{11}(P, F) &= P \cdot F,\\
@@ -66,10 +65,11 @@ with $S_{11}$ and $S_00$ representing the total count of matching ones and zeros
 \end{align}
 
 
-Note that the correlation coefficient s can take a value in range [0, 1]. In the following, this coefficient is multiplies by 100 to represent the correlations as percentages.
+Note that the correlation coefficient s can take a value in range [0, 1]. In the following, this coefficient is multiplied by 100 to represent the correlations as percentages.
 
 The raw feature correlations with the first (Section \ref{sec:exp_phase_I}) and the second phase of the experiment (Section \ref{sec:exp_phase_II}) are reported in Tables \ref{tab:ind_correlation_p1} and \ref{tab:ind_correlation_p2}, respectively. In these tables, the leftmost column indicates the processing type applied to the images before the computation of features.
 
+\afterpage{
 \begin{landscape}
 \begin{table}
 \caption{Individual feature correlations with the first phase of the experiment. The numbers indicate the Sokal-Michener correlation scaled by 100 to represent percentages.}
@@ -94,7 +94,9 @@ Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 53.04 & 54.61 & 53.0
 \end{tabular}
 \end{table}
 \end{landscape}
+}
 
+\afterpage{
 \begin{landscape}
 \begin{table}
 \caption{Individual feature correlations with the second phase of the experiment. The numbers indicate the Sokal-Michener correlation scaled by 100 to represent percentages.}
@@ -119,13 +121,44 @@ Pattanaik et al.~\cite{pattanaik2000time} & 78.66 & 78.11 & 57.33 & 58.66 & 55.7
 \end{tabular}
 \end{table}
 \end{landscape}
+}
 
 “HDR-original” represents the unaltered HDR image whereas “HDR-linear” represents its linearly scaled version. The other processing types all include the application of a certain tone mapping operator. For all processing types, except the original, the images were gamma-corrected and scaled to [0, 255] range.
 
-In Table~\ref{tab:p_individual}, the statistical significance of the difference between each individual feature correlations are given. Fisher's exact test~\cite{fisher1922interpretation} is used for the calculations and image features are calculated on images tone mapped with Ferradans et al.~\cite{ferradans2011analysis} TMO. This analysis shows that, the difference for the correlations of VGG16 and VGG19 features are not that significant and also Color - Luminance - Texture performances are rather close. On the other hand, deep learning features are significantly better than the other features and similarly, GIST feature is significantly better than Color and Texture features.
+%In both models, closely related deeply learned features VGG16 and VGG19 used as separate features instead of selecting the better performing one. The reason behind this, as the study~\cite{simonyan2014very} suggests, the results obtained from combination of VGG16 and VGG19 (by taking an average) performs better than both VGG16 and VGG19, indicates that VGG16 and VGG19 are complementary features. This claim is consistent with the results given Table \ref{tab:fuse_vgg_phaseI_II}, although the improvement is not high.
+
+%\afterpage{
+%\begin{landscape}
+%\begin{table}
+%\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase I (left half) and Phase II (right half) of the experiment.}
+%\label{tab:fuse_vgg_phaseI_II}
+%\begin{tabular}{r|c|c|c||c|c|c}
+%\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
+%\hline
+%HDR-original &  56.79 & 58.09 & 57.91 &  64.88  &  67.14  &  66.59\\
+%HDR-linear &  63.54 & 63.31 & 63.85 &  75.58   & 76.13 & 76.96 \\
+%Drago et al.~\cite{drago2003adaptive} &  65.88 & 65.74 & 66.31 &  80.88 &    81.8 &    82.35\\
+%Mai et al.~\cite{mai2010optimizing} &  65.28 & 65.13 & 66.06 &  80.00 &   79.95    & 81.20 \\
+%Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 66.21 & 80.92 &    81.61 &    82.21 \\
+%Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 66.29 & 80.92   & 81.57   &  82.30 \\
+%Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 66.44 & 81.75   & 81.34  &  82.76 \\
+%Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 65.97 & 80.41   & 80.65 &   81.24 \\
+%Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 65.81 & 80.37  &  80.41 & 81.24\\
+%Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 66.25 & 80.51 & 80.92 & 81.98\\
+%Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 66.01 &  80.00   & 80.78 & 80.51\\
+%Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 66.77 & 81.38 & 82.21 &  83.27\\
+%Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 64.76 & 78.66   & 78.11   & 79.77
+%\end{tabular}
+%\end{table}
+%\end{landscape}
+%}
 
 
-\begin{table}[ht]
+\subsection{Statistical Analysis}
+In Table~\ref{tab:p_individual}, the statistical significance of the difference between each individual feature correlations are given. Fisher's exact test~\cite{fisher1922interpretation} is used for the calculations, image features are calculated on images tone mapped with Ferradans et al.~\cite{ferradans2011analysis} TMO, and correlation is calculated against Phase II of the experiment. This analysis shows that, the difference for the correlations of VGG16 and VGG19 features are not that significant and also Color - Luminance - Texture performances are rather close. On the other hand, deep learning features are significantly better than the other features and similarly, GIST feature is significantly better than Color and Texture features.
+
+
+\begin{table}
 \centering
 \resizebox{\textwidth}{!}{\begin{tabular}{c | c c c c c c}
  &VGG16& VGG19& Color& Luminance& Texture & GIST \\
@@ -141,60 +174,100 @@ GIST &$1.963x10^{-33}$ &$3.302x10^{-37}$ &$3.720x10^{-06}$ &$0.014$ &$6.947x10^{
 \label{tab:p_individual}
 \end{table}
 
+Another variable in the experiment analysis is the selection of tone mapping operators. Results given in Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2} shows that for a given image feature tone mapping operators are performing comparably. Table~\ref{tab:p_tmos} shows the $p$ values calculated with Fisher's exact test~\cite{fisher1922interpretation} between the VGG19 feature's correlation with the Phase II of the user study on images tone mapped with different tone mapping operators. While for most of the tone mapping operators the performance difference is not significant. For this feature, the differences between the best performing Ferradans et. al.'s TMO~\cite{ferradans2011analysis} and the successors Drago et al.'s~\cite{drago2003adaptive} and Reinhard et al.~\cite{reinhard2002photographic} TMOs are not significant ($p > 0.6$). However, the difference to the worst performing TMO, Pattanaik et al.'s TMO is significant with $p=0.001$.
+
+\begin{table}[ht]
+\resizebox{\textwidth}{!}{\begin{tabular}{c|c c c c c }
+\centering
+ & Dra.~\cite{drago2003adaptive} & Mai.~\cite{mai2010optimizing} & Rein.(local)~\cite{reinhard2002photographic} & Rein. (global)~\cite{reinhard2002photographic} & Dur.~\cite{durand2002fast} \\
+\hline
+Dra.~\cite{drago2003adaptive} & 1.0 &0.132 &0.906 &0.875 &0.725  \\ 
+Mai.~\cite{mai2010optimizing} & 0.132 &1.0 &0.178 &0.19 &0.265  \\ 
+Rein.(local)~\cite{reinhard2002photographic} & 0.906 &0.178 &1.0 &1.0 &0.845 \\ 
+Rein.(global)~\cite{reinhard2002photographic} & 0.875 &0.19 &1.0 &1.0 &0.876  \\ 
+Dur.~\cite{durand2002fast} & 0.725 &0.265 &0.845 &0.876 &1.0  \\ 
+Man.~\cite{mantiuk2006perceptual} & 0.351 &0.593 &0.438 &0.461 &0.588  \\ 
+Rein.~\cite{reinhard2005dynamic} & 0.261 &0.732 &0.333 &0.353 &0.463  \\ 
+Dur.~\cite{durand2002fast} & 0.483 &0.444 &0.586 &0.613 &0.756  \\ 
+Man.~\cite{mantiuk2008display} & 0.414 &0.516 &0.509 &0.534 &0.67  \\ 
+Fer.~\cite{ferradans2011analysis} & 0.752 &0.063 &0.636 &0.608 &0.479  \\ 
+Pat.~\cite{pattanaik2000time} & 0.003 &0.146 &0.005 &0.005 &0.009\\ 
+\end{tabular}}
+\\
+\\
+\\
+\resizebox{\textwidth}{!}{\begin{tabular}{c|c c c c c c}
+\centering
+  & Man.~\cite{mantiuk2006perceptual} & Rein.~\cite{reinhard2005dynamic} & Dur.~\cite{durand2002fast} & Man.~\cite{mantiuk2008display} & Fer.~\cite{ferradans2011analysis} & Pat.~\cite{pattanaik2000time}\\
+\hline
+Dra.~\cite{drago2003adaptive} &0.351 &0.261 &0.483 &0.414 &0.752 &0.003 \\ 
+Mai.~\cite{mai2010optimizing} &0.593 &0.732 &0.444 &0.516 &0.063 &0.146 \\ 
+Rein.(local)~\cite{reinhard2002photographic} &0.438 &0.333 &0.586 &0.509 &0.636 &0.005 \\ 
+Rein.(global)~\cite{reinhard2002photographic}  &0.461 &0.353 &0.613 &0.534 &0.608 &0.005 \\ 
+Dur.~\cite{durand2002fast}  &0.588 &0.463 &0.756 &0.67 &0.479 &0.009 \\ 
+Man.~\cite{mantiuk2006perceptual} &1.0 &0.878 &0.847 &0.939 &0.198 &0.043 \\ 
+Rein.~\cite{reinhard2005dynamic}  &0.878 &1.0 &0.701 &0.788 &0.139 &0.067 \\ 
+Dur.~\cite{durand2002fast}  &0.847 &0.701 &1.0 &0.939 &0.291 &0.024 \\ 
+Man.~\cite{mantiuk2008display} &0.939 &0.788 &0.939 &1.0 &0.241 &0.032 \\ 
+Fer.~\cite{ferradans2011analysis}  &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\ 
+Pat.~\cite{pattanaik2000time}  &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
+\end{tabular}}
+\caption{$p$ values for statistical significance between correlations of VGG19 features extracted on images tone mapped with different tone mapping operators, calculated with Fisher's exact test. User responses are used from Phase II of the experiment.}
+\label{tab:p_tmos}
+\end{table}
+
+
+%\begin{landscape}
+%\begin{table}[ht]
+%\resizebox{\textheight}{!}{\begin{tabular}{c|c c c c c c c c c c c}
+%\centering
+% & Drago et al.~\cite{drago2003adaptive} & Mai et al.~\cite{mai2010optimizing} & Reinhard et al. (local)~\cite{reinhard2002photographic} & Reinhard et al. (global)~\cite{reinhard2002photographic} & Durand \& Dorsey~\cite{durand2002fast} & Mantiuk et al.~\cite{mantiuk2006perceptual} & Reinhard \& Devlin~\cite{reinhard2005dynamic} & Fattal et al.~\cite{durand2002fast} & Mantiuk et al.~\cite{mantiuk2008display} & Ferradans et al.~\cite{ferradans2011analysis} & Pattanaik et al.~\cite{pattanaik2000time}\\
+%\hline
+%Drago et al.~\cite{drago2003adaptive} & 1.0 &0.132 &0.906 &0.875 &0.725 &0.351 &0.261 &0.483 &0.414 &0.752 &0.003 \\ 
+%Mai et al.~\cite{mai2010optimizing} & 0.132 &1.0 &0.178 &0.19 &0.265 &0.593 &0.732 &0.444 &0.516 &0.063 &0.146 \\ 
+%Reinhard et al. (local)~\cite{reinhard2002photographic} & 0.906 &0.178 &1.0 &1.0 &0.845 &0.438 &0.333 &0.586 &0.509 &0.636 &0.005 \\ 
+%Reinhard et al. (global)~\cite{reinhard2002photographic} & 0.875 &0.19 &1.0 &1.0 &0.876 &0.461 &0.353 &0.613 &0.534 &0.608 &0.005 \\ 
+%Durand \& Dorsey~\cite{durand2002fast} & 0.725 &0.265 &0.845 &0.876 &1.0 &0.588 &0.463 &0.756 &0.67 &0.479 &0.009 \\ 
+%Mantiuk et al.~\cite{mantiuk2006perceptual} & 0.351 &0.593 &0.438 &0.461 &0.588 &1.0 &0.878 &0.847 &0.939 &0.198 &0.043 \\ 
+%Devlin~\cite{reinhard2005dynamic} & 0.261 &0.732 &0.333 &0.353 &0.463 &0.878 &1.0 &0.701 &0.788 &0.139 &0.067 \\ 
+%Fattal et al.~\cite{durand2002fast} & 0.483 &0.444 &0.586 &0.613 &0.756 &0.847 &0.701 &1.0 &0.939 &0.291 &0.024 \\ 
+%Mantiuk et al.~\cite{mantiuk2008display} & 0.414 &0.516 &0.509 &0.534 &0.67 &0.939 &0.788 &0.939 &1.0 &0.241 &0.032 \\ 
+%Ferradans et al.~\cite{ferradans2011analysis} & 0.752 &0.063 &0.636 &0.608 &0.479 &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\ %Pattanaik et al.~\cite{pattanaik2000time} & 0.003 &0.146 &0.005 &0.005 &0.009 &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
+%\end{tabular}}
+%\caption{caption[!]}
+%\end{table}
+%\end{landscape}
+
+
 \section{Combined Feature Correlation}
 
-Given the individual correlations reported in the previous tables, a natural question that follows is if they can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of linear regression analysis are performed yielding two related but different models.
+Given the individual correlations reported in the previous tables Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2}, a natural question that follows is if the features can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of logistic regression analysis are performed yielding two related but different models.
 
-In both models, closely related deeply learned features VGG16 and VGG19 used as separate features instead of selecting the better performing one. The reason behind this, as the study~\cite{simonyan2014very} suggests, the results obtained from combination of VGG16 and VGG19 (by taking an average) performs better than both VGG16 and VGG19, indicates that VGG16 and VGG19 are complementary features. This claim is consistent with our results given Table \ref{tab:fuse_vgg_phaseI} and \ref{tab:fuse_vgg_phaseII}, although the improvement is not high.
-
-\begin{table}
-\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase I of the experiment.}
-\label{tab:fuse_vgg_phaseI}
-\begin{tabular}{r|c|c|c}
-\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
-\hline
-HDR-original &  56.79 & 58.09 & 57.91 \\
-HDR-linear &  63.54 & 63.31 & 63.85 \\
-Drago et al.~\cite{drago2003adaptive} &  65.88 & 65.74 & 66.31 \\
-Mai et al.~\cite{mai2010optimizing} &  65.28 & 65.13 & 66.06 \\
-Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 66.21 \\
-Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 66.29 \\
-Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 66.44 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 65.97 \\
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 65.81 \\
-Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 66.25 \\
-Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 66.01 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 66.77 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 64.76
-\end{tabular}
-\end{table}
-
-\begin{table}
-\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase II of the experiment}
-\label{tab:fuse_vgg_phaseII}
-\begin{tabular}{c|c|c|c}
-\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
-\hline
-HDR-original &  64.88  &  67.14  &  66.59 \\
-HDR-linear &  75.58   & 76.13 & 76.96 \\
-Drago et al. ~\cite{drago2003adaptive} &  80.88 &    81.8 &    82.35 \\
-Mai et al. ~\cite{mai2010optimizing} &  80 &   79.95    & 81.2 \\
-Reinhard et al. (local) ~\cite{reinhard2002photographic} & 80.92 &    81.61 &    82.21 \\
-Reinhard et al. (global) ~\cite{reinhard2002photographic} & 80.92   & 81.57   &  82.3 \\
-Durand \& Dorsey~\cite{durand2002fast} & 81.75   & 81.34  &  82.76 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41   & 80.65 &   81.24 \\
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37  &  80.41 &    81.24 \\
-Fattal et al.~\cite{durand2002fast} & 80.51   & 80.92 &    81.98 \\
-Mantiuk et al.~\cite{mantiuk2008display} &  80   & 80.78   & 80.51 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 81.38 &    82.21 &    83.27 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
-\end{tabular}
-\end{table}
+%\begin{table}
+%\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase II of the experiment}
+%\label{tab:fuse_vgg_phaseII}
+%\begin{tabular}{c|c|c|c}
+%\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
+%\hline
+%HDR-original &  64.88  &  67.14  &  66.59 \\
+%HDR-linear &  75.58   & 76.13 & 76.96 \\
+%Drago et al. ~\cite{drago2003adaptive} &  80.88 &    81.8 &    82.35 \\
+%Mai et al. ~\cite{mai2010optimizing} &  80 &   79.95    & 81.2 \\
+%Reinhard et al. (local) ~\cite{reinhard2002photographic} & 80.92 &    81.61 &    82.21 \\
+%Reinhard et al. (global) ~\cite{reinhard2002photographic} & 80.92   & 81.57   &  82.3 \\
+%Durand \& Dorsey~\cite{durand2002fast} & 81.75   & 81.34  &  82.76 \\
+%Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41   & 80.65 &   81.24 \\
+%Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37  &  80.41 &    81.24 \\
+%Fattal et al.~\cite{durand2002fast} & 80.51   & 80.92 &    81.98 \\
+%Mantiuk et al.~\cite{mantiuk2008display} &  80   & 80.78   & 80.51 \\
+%Ferradans et al.~\cite{ferradans2011analysis} & 81.38 &    82.21 &    83.27 \\
+%Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
+%\end{tabular}
+%\end{table}
 
 
 
 \subsection{Triplet Model}
-%paper
 In the first analysis, the aim is to develop a model that predicts which of the two test images is more similar to the reference image using the pairwise distances between the test and reference images. Assuming that j is a feature index, one can compute these pairwise differences as follows:
 \begin{align}
     a_j &= d_j(f_j(R), f_j(A)), \\
@@ -236,8 +309,9 @@ From this equation, it can be derived that the probability of a user responding 
 
 If $Pr(x = 1) > 0.5$, it is assumed that the model has selected the left image. Otherwise, the model’s response was taken as the right image.
 
-To measure the effectiveness of this model 10-fold cross validation is used. In each fold, 90\% of the trials were selected for training and the remaining 10\% for testing. This process was repeated 10 times while ensuring that each test fold is mutually exclusive from each other. Similar to the analysis of individual features, the success of this model is assessed against both the Phase I and the Phase II of the experiment. The results are shown in Table \ref{tab:correlation_triplet_model}. It can be seen that the feature combination, on average, improves the success of each presentation type by about 3\% to 4\%. The best three results are obtained by Ferradans et al.’s~\cite{ferradans2011analysis}, Drago et al.’s ~\cite{drago2003adaptive}, and Reinhard et al.’s ~\cite{reinhard2002photographic} TMO algorithms. The reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+To measure the effectiveness of this model 10-fold cross validation is used. In each fold, 90\% of the trials were selected for training and the remaining 10\% for testing. This process was repeated 10 times while ensuring that each test fold is mutually exclusive from each other. Similar to the analysis of individual features, the success of this model is assessed against both the Phase I and the Phase II of the experiment. The results are shown in Table \ref{tab:correlation_triplet_model}. It can be seen that the feature combination, on average, improves the success of each presentation type by about 3\% to 4\%. The best three results are obtained by Ferradans et al.’s~\cite{ferradans2011analysis}, Drago et al.’s~\cite{drago2003adaptive}, and Reinhard et al.’s ~\cite{reinhard2002photographic} TMO algorithms. The reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
+\afterpage{
 \begin{landscape}
 \begin{table}
 \caption{The correlations of the first regression model with the user responses. Phase I and Phase II represent the initial and extended experiments respectively. The coefficients are reported for the Phase II of the experiment only due to its higher correlation with the user data.}
@@ -263,6 +337,7 @@ Pattanaik et al.~\cite{pattanaik2000time} & 65.02 & 79.89 & -0.0365 & -7.5194 & 
 \end{tabular}
 \end{table}
 \end{landscape}
+}
 
 
 %paper
@@ -311,8 +386,9 @@ By converting this response to probability values as in Equation \ref{eq:respons
 \end{align}
 
 
-Given a triplet, if $Pr(x = left) > Pr(x =right)$ it is assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s ~\cite{drago2003adaptive} TMO in the extended experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+Given a triplet, if $Pr(x = left) > Pr(x =right)$ it is assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s~\cite{drago2003adaptive} TMO in the second phase of the experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
+\afterpage{
 \begin{landscape}
 \begin{table}
 \caption{The correlations of the second regression model with the user responses. Phase I and Phase II represent the initial and extended experiments respectively. The coefficients are reported for the Phase II of the experiment only due to its higher correlation with the user data.}
@@ -338,3 +414,4 @@ Pattanaik et al.~\cite{pattanaik2000time} & 64.94 & 79.84 & 6.6735 & -5.6657 & -
 \end{tabular}
 \end{table}
 \end{landscape}
+}
