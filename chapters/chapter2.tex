@@ -1,6 +1,85 @@
 \chapter{Related Work}
 \label{chp:b2}
 
+\section{HDR Imaging}
+
+While HDR imaging has long been an active field of research, recent developments in HDR imaging~\cite{Rein2010,Banterle2011,chalmers2016high}, in particular those pertaining to HDR image and video capture~\cite{tocci2011versatile,froehlich2014creating} and display systems~\cite{seetzen2004high}, and HDR
+video streaming standards~\cite{standard2016dynamic} to allow direct rendition of HDR images will likely make HDR images more ubiquitous in the near future. However, despite the practical improvements in the field, there is also a need for fundamental and experimental research that explores various aspects related to HDR imaging and dynamic range. Hanhart et al. investigated the performance of various objective metrics in quantifying visual distortions of HDR images commensurate with subjective opinions~\cite{hanhart2015benchmarking}. The authors found HDR-VDP-2~\cite{mantiuk2011hdr} and HDR-VQM~\cite{narwaria2015hdr} to be the best predictors of visual quality. In another study, Grimaldi et al. investigated how image statistics change as a function of dynamic range and found that there are indeed differences between HDR and LDR images~\cite{grimaldi2019statistics}. The authors, also found, however, that the majority of these differences are accounted for by the early visual processing that takes place in the human visual system. However, these works do not consider the HDR image similarity problem.
+
+
+\subsection{Tone Mapping}
+HDR images can capture the true dynamic range of a scene by using wider representations compared to standard 8 bit images. However, in order to display or print HDR images on conventional devices, the dynamic range of the image should be compressed to match the dynamic range of the device. This operation, namely tone mapping, aims to compress the dynamic range while keeping the visual appearance intact. 
+
+Tone mapping is an extensively studied research area and there are many tone mapping operators~\cite{Rein2010}. In this thesis, to investigate the effect of tone mapping operators to visual similarity, eleven commonly used tone mapping operators are selected. Basically, these tone mapping operators can be divided into three categories depending on their operation domain: global and local operators in spatial domain, and gradient domain operators~\cite{Rein2010}. 
+
+Global tone mapping operators apply the same non-linear function to all luminance values without considering pixel neighbourhood. This makes these operators fast compared to other tone mapping operators however, they may result with contrast loss in dark and bright regions. Reinhard et al.~\cite{reinhard2002photographic} introduces a transfer function that compresses low luminance values less and high luminance values more. Drago et al. \cite{drago2003adaptive} uses logarithmic compression for tone mapping while adaptively changing the logarithm base depending on the luminance value. A global algorithm is proposed by Pattanaik et al.~\cite{pattanaik2000time}, which takes in to account the illumination adaptation time of HSV. Other global methods that model photoreceptors of HVS is the work from Reinhard \& Devlin ~\cite{reinhard2005dynamic} and Ferradans et al.~\cite{ferradans2011analysis}. Mantiuk et al. ~\cite{mantiuk2008display} models the display as well as HSV. On the other hand, Mai et al.~\cite{mai2010optimizing} proposed a TMO that minimizes the mean square error between the input HDR and the result of inverse tone mapping.
+
+Local TMOs are computationally more expensive than global TMOs but they may preserve the details better~\cite{Rein2010}. A local TMO that is inspired dodging and burning technique of traditional photography is also given in \cite{reinhard2002photographic}. This operator darkens or brightens the pixel using Gaussian filters on different scales to increase the contrast  depending on the luminance of the pixels in the neighborhood. Another local TMO, proposed by Durand \& Dorsey \cite{durand2002fast}, separated the image to base and detail using bilateral filter and compress only the base level to preserve the details. 
+
+There are also TMOs that operate on gradient domain rather than the spatial domain. Fattal et al.~\cite{fattal2002gradient} suggest to reduce the magnitudes of the high gradients more than the gradients with low magnitude. Then, a low dynamic range image is obtained by solving a Poisson equation on this magnitude-wise altered gradient map. Mantiuk et al.~\cite{mantiuk2006perceptual} follows a similar approach with some improvements on local contrast by using a bigger neighborhood and multi level Gaussian pyramid to enhance global contrast.
+
+In Figure~\ref{fig:tmos}, tone mapping results for the "Belgium House" HDR image is given for several tone mapping operators. fpstools~\cite{HDRGallery} implementation is used for the operators with the default parameters for each operator. As depicted in the figure, tone mapping operators give different results for the same scene in terms of image properties like brightness and color.
+
+
+\begin{figure}
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_drago03.png}
+    \caption{Drago et al. ~\cite{drago2003adaptive}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_mai11.png}
+    \caption{Mai et al. ~\cite{mai2010optimizing}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_reinhard02.png}
+    \caption{Reinhard et al. (local) ~\cite{reinhard2002photographic}}
+\end{subfigure}\\
+\begin{subfigure}[b]{0.33\textwidth}
+   \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_reinhard02_global.png}
+    \caption{Reinhard et al.(global) ~\cite{reinhard2002photographic}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_durand02.png}
+    \caption{Durand \& Dorsey~\cite{durand2002fast}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_mantiuk06.png}
+    \caption{Mantiuk et al.~\cite{mantiuk2006perceptual}}
+\end{subfigure}\\
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_reinhard05.png}
+    \caption{Reinhard \& Devlin~\cite{reinhard2005dynamic}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_fattal02.png}
+    \caption{Fattal et al.~\cite{durand2002fast}}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_mantiuk08.png}
+    \caption{Mantiuk et al.~\cite{mantiuk2008display}}
+\end{subfigure}\hfill\\
+\begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_ferradans11.png}
+    \caption{Ferradans et al.~\cite{ferradans2011analysis}}
+\end{subfigure}\hspace{-1pt}
+\begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_pattanaik00.png}
+    \caption{Pattanaik et al.~\cite{pattanaik2000time}}
+\end{subfigure}\hfill
+\caption{Tone mapping results for the "Belgium House" HDR image with different tone mapping operators. Note that pfstools~\cite{HDRGallery} implementation is used with default parameters.}
+\label{fig:tmos}
+\end{figure}
+
 \section{Image Similarity}
 
 Traditionally, image similarity is measured by measuring the distance between hand crafted features extracted from each image. These hand crafted features include simple descriptors such as color/luminance histograms, or improved ideas, including histogram of oriented gradients~\cite{dalal2005histograms}. GIST~\cite{oliva2001modeling}, SIFT~\cite{lowe2004distinctive}, SURF~\cite{bay2006surf}. These features are compared using several types of distance metrics. Recently, deep convolutional neural networks (DCNNs) became the state of art for image classification. Starting with AlexNet~\cite{krizhevsky2012imagenet} and followed by deeper networks such as VGG~\cite{simonyan2014very}, GoogleNet\cite{szegedy2015going}, and ResNet~\cite{he2016deep}, DCNNs started to perform near human level success for image classification. Their success lead to use feature vectors that have been obtained from DCNNs for image retrieval~\cite{wan2014deep,gordo2016deep,noh2017large,radenovic2018fine}. Unlike previous approaches that are based on hand-crafted features, DCNNs learn the feature vector itself directly from the image. 
@@ -15,31 +94,11 @@ Of most related to our work are two similarity studies that also employ subjecti
 
 In another study~\cite{neumann2006image}, user experiments are conducted to evaluate the relationship between an image-indexing system and perceived similarity in an LDR setting. The tested image indexing system is based on basic properties of early stages of human vision -- chromaticity, luminance, and texture. Two-alternative forced-choice (2AFC) method is used for all experiments. Three images are shown to the observer, the query image and two test images. Of these two images one image is called the target and the other the distractor. These images are selected based on the rankings obtained from the image-indexing system. Then the correlation between the users' preference and index rank is investigated. First, each index, chromaticity, luminance, and texture are calculated separately. From these indexes chromaticity is found to give the best results. Then for the second experiment, combinations of the indexes are evaluated. The combination of chromaticity and texture indices are found to give better results than chromaticity alone and the combination of all indices are found to give the best result.
 
-
-\section{HDR Imaging}
-The need for HDR imaging was realized for the first time in computer graphics to deal with the requirements of physically accurate lighting simulation systems~\cite{glassner1995principles}. Such systems produced numerically unbounded pixel values, necessitating their storage in HDR file formats~\cite{ward1998rendering}. HDR images have typically been termed as ``scene-referred'' as opposed to ``display-referred'' -- a term used for LDR images~\cite{Rein2010}. However, as display devices have traditionally been low dynamic range, displaying these images on LDR devices required an operation known as tone mapping~\cite{Tumb93,Ward97}. Numerous tone mapping operators (TMOs) have been developed in literature ranging from simple contrast adjustments to complex algorithms modeling the human visual system~\cite{Ferw96} and the properties of display devices~\cite{Mantiuk2008}. Many methods have also been produced to create photographic HDR images of real-world scenes~\cite{Debe97}, including dynamic scenes~\cite{sen2012robust,kalantari2017deep}.Besides computer graphics, HDR imaging has many application areas including studying of fossils~\cite{theodor2009high}, cultural heritage and archeology~\cite{happa2010high}, structural engineering~\cite{grinzato2009seismic}, architecture~\cite{cai2013high}, medical imaging~\cite{harifi2015efficient,rizzi2018visual}, forensics~\cite{brown2010forensic}, and automotive industry~\cite{wu2012fast}.
-
-While HDR imaging has long been an active field of research, recent developments in HDR imaging~\cite{Rein2010,Banterle2011,chalmers2016high}, in particular those pertaining to HDR image and video capture~\cite{tocci2011versatile,froehlich2014creating} and display systems~\cite{seetzen2004high}, and HDR
-video streaming standards~\cite{standard2016dynamic} to allow direct rendition of HDR images will likely make HDR images more ubiquitous in the near future. However, despite the practical improvements in the field, there is also a need for fundamental and experimental research that explores various aspects related to HDR imaging and dynamic range. Hanhart et al. investigated the performance of various objective metrics in quantifying visual distortions of HDR images commensurate with subjective opinions~\cite{hanhart2015benchmarking}. The authors found HDR-VDP-2~\cite{mantiuk2011hdr} and HDR-VQM~\cite{narwaria2015hdr} to be the best predictors of visual quality. In another study, Grimaldi et al. investigated how image statistics change as a function of dynamic range and found that there are indeed differences between HDR and LDR images~\cite{grimaldi2019statistics}. The authors, also found, however, that the majority of these differences are accounted for by the early visual processing that takes place in the human visual system. However, these works do not consider the HDR image similarity problem.
-
 As mentioned above, although visual image similarity is an extensively studied subject~\cite{liu2007survey}, to our knowledge there is no study that directly addresses this problem for HDR images. Thus, understanding the nature of image similarity for HDR images and developing an objective similarity measure is the primary goal of this thesis. 
 
-\subsection{Tone Mapping}
-HDR images can capture the true dynamic range of a scene by using wider representations compared to standard 8 bit images. However, in order to display or print HDR images on conventional devices, the dynamic range of the image should be compressed to match the dynamic range of the device. This operation, namely tone mapping, aims to compress the dynamic range while keeping the visual appearance intact. 
-
-Tone mapping is an extensively studied research area and there are many tone mapping operators~\cite{Rein2010}. In this thesis, to investigate the effect of tone mapping operators to visual similarity, eleven commonly used tone mapping operators are selected. Basically, these tone mapping operators can be divided into three categories depending on their operation domain: global and local operators in spatial domain, and gradient domain operators~\cite{Rein2010}. 
-
-Global tone mapping operators apply the same non-linear function to all luminance values without considering pixel neighbourhood. This makes these operators fast compared to other tone mapping operators however, they may result with contrast loss in dark and bright regions. Reinhard et al.~\cite{reinhard2002photographic} introduces a transfer function that compresses low luminance values less and high luminance values more. Drago et al. \cite{drago2003adaptive} uses logarithmic compression for tone mapping while adaptively changing the logarithm base depending on the luminance value. A global algorithm is proposed by Pattanaik et al.~\cite{pattanaik2000time}, which takes in to account the illumination adaptation time of HSV. Other global methods that model photoreceptors of HVS is the work from Reinhard \& Devlin ~\cite{reinhard2005dynamic} and Ferradans et al.~\cite{ferradans2011analysis}. Mantiuk et al. ~\cite{mantiuk2008display} models the display as well as HSV. On the other hand, Mai et al.~\cite{mai2010optimizing} proposed a TMO that minimizes the mean square error between the input HDR and the result of inverse tone mapping.
-
-Local TMOs are computationally more expensive than global TMOs but they may preserve the details better~\cite{Rein2010}. A local TMO that is inspired dodging and burning technique of traditional photography is also given in \cite{reinhard2002photographic}. This operator darkens or brightens the pixel using Gaussian filters on different scales to increase the contrast  depending on the luminance of the pixels in the neighborhood. Another local TMO, proposed by Durand \& Dorsey \cite{durand2002fast}, separated the image to base and detail using bilateral filter and compress only the base level to preserve the details. 
-
-There are also TMOs that operate on gradient domain rather than the spatial domain. Fattal et al.~\cite{fattal2002gradient} suggest to reduce the magnitudes of the high gradients more than the gradients with low magnitude. Then, a low dynamic range image is obtained by solving a Poisson equation on this magnitude-wise altered gradient map. Mantiuk et al.~\cite{mantiuk2006perceptual} follows a similar approach with some improvements on local contrast by using a bigger neighborhood and multi level Gaussian pyramid to enhance global contrast.
-
-
-\section{Features}
+\section{Image Features}
 \label{sec:features}
-%paper
-In this thesis, five kinds of features are used to model HDR images: color, luminance, texture, GIST, and DCNN features. Table \ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. The following sections outline the details of these features and the corresponding distance metrics. In the user experiment analysis, the HDR images are tone mapped with these operators.
+As the most fundamental part of many computer vision applications, image feature extraction is a widely studied research topic for the last several decades. There are numerous image features in the literature developed with different purposes which can be divided into two broad categories: global and local features. While global features like histograms of image properties represent the whole image with a single feature vector, local features like SIFT~\cite{lowe2004distinctive} or SURF~\cite{bay2006surf} are a collection of vectors representing small neighborhoods called interest regions. Although local features are used successfully for the applications like image classification or retrieval, this thesis focuses on global features to investigate the image similarity in a general sense. In this section, a review of global image features that have been used in this thesis is given. Table~\ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. 
 
 \begin{table}
 \caption{HDR Image features and distances}
@@ -60,24 +119,22 @@ VGG16/VGG19 - fc7 & Fused fc7 layer & Cosine distance
 %paper
 \subsection{Color}
 %paper
-Since the early days of the image similarity research, color has been used as one of the most discriminative cues~\cite{neumann2006image}. In this thesis,  we used the $a$ and $b$ channels of the CIELAB color space~\cite{iso201111664} to represent chromaticity information. This is an opponent color space, where the $a$ channel represents red/green opponent colors and the $b$ channel yellow/blue opponent colors. We used a 2D chromaticity histogram to represent the distribution of colors in a given image. Each dimension contained $15$ bins for a total of $225$ bins.  Figure~\ref{fig:hists} shows this histogram for the Mason Lake image from the
-dataset~\cite{fairchild2007hdr}.
+Since the early days of the image similarity research, color has been used as one of the most discriminative cues~\cite{neumann2006image}. In this thesis,  we used the $a$ and $b$ channels of the CIELAB color space~\cite{iso201111664} to represent chromaticity information. This is an opponent color space, where the $a$ channel represents red/green opponent colors and the $b$ channel yellow/blue opponent colors. We used a 2D chromaticity histogram to represent the distribution of colors in a given image. Each dimension contained $15$ bins for a total of $225$ bins. Figure~\ref{fig:hists} shows this histogram for the Mason Lake image from the dataset~\cite{fairchild2007hdr}.
 
 \begin{figure}
 \centering
-\caption{Sample image (left), 2D histogram (right).}
-\label{fig:hists}
 \begin{tabular}{c c}
 \includegraphics[height=1.8in]{figures/chapter2/MasonLake.jpg} &
 \includegraphics[height=1.8in]{figures/chapter2/57_histab.png}
-
 \end{tabular}
+\caption{Sample image (left), 2D histogram (right).}
+\label{fig:hists}
 \end{figure}
 
 %paper
 \subsection{Texture}
 %paper
-Texture is the second most used feature for content based image retrieval systems after chromatic features.  This feature is especially helpful for discriminating images that have similar color but different spatial characteristics such as blue sky and sea or sand and buildings. To represent the texture information histogram of gradient magnitudes~\cite{sharma2015histogram} is used. 
+Texture is the second most used feature for content based image retrieval systems after chromatic features. This feature is especially helpful for discriminating images that have similar color but different spatial characteristics such as blue sky and sea or sand and buildings. In this thesis, to represent the texture information histogram of gradient magnitudes~\cite{sharma2015histogram} is used. 
 %paper
 \subsection{Luminance}
 %paper
@@ -97,9 +154,8 @@ Furthermore, there is no prelabeled large HDR image dataset to use for training 
 
 For feature extraction, pretrained AlexNet~\cite{krizhevsky2012imagenet} and two variants of VGG networks, VGG16 and VGG19, are used~\cite{simonyan2014very}. All networks are trained on the ImageNet~\cite{russakovsky2015imagenet} dataset, but we also evaluated their performance when trained using different datasets. For transfer learning, the last fully connected layer, which contains classification outputs, is removed and the remaining $4096$ dimensional two fully connected layers, \textbf{fc6} and \textbf{fc7}, are used as feature vectors. As suggested by Simonyan and Zisserman~\cite{simonyan2014very}, the results obtained from VGG16 and VGG19 are fused (by taking an average) and it is observed that the fused version performs better than both VGG16 and VGG19. The distance between the feature vectors are calculated using cosine distance, which is a commonly used distance metric for deep learning features. 
 
-\section{Computational Complexity}
-As attentive readers may inquire about the computational complexity of these features, a brief analysis is provided in this section. The color and luminance features are merely histograms and they can be computed in O(N) time, where N represents the number of image pixels. The GIST descriptor is based on computing the convolution of 32 Gabor filters at 4 scales and 8 orientations to compute feature maps and then averaging the features to obtain a 16 element vector per feature map. These vectors are then concatenated to find the final feature vector. Therefore, the GIST feature also has a linear time computational complexity. The texture feature represented by HOG is similar to GIST in terms of its operation, albeit being somewhat simpler, and also has a linear complexity. Finally, the deeply learned features are computed by a single forward application of the VGG network, which also involves several convolutions at multiple scales as well as application of activation functions. As the convolutional kernel sizes are negligible compared to the image size, the computation of VGG features also has a linear time computational complexity. In summary, all of the features can be computed at real-time rates in modern hardware, especially if GPUs are utilized.
-
+%\section{Computational Complexity}
+%As attentive readers may inquire about the computational complexity of these features, a brief analysis is provided in this section. The color and luminance features are merely histograms and they can be computed in O(N) time, where N represents the number of image pixels. The GIST descriptor is based on computing the convolution of 32 Gabor filters at 4 scales and 8 orientations to compute feature maps and then averaging the features to obtain a 16 element vector per feature map. These vectors are then concatenated to find the final feature vector. Therefore, the GIST feature also has a linear time computational complexity. The texture feature represented by HOG is similar to GIST in terms of its operation, albeit being somewhat simpler, and also has a linear complexity. Finally, the deeply learned features are computed by a single forward application of the VGG network, which also involves several convolutions at multiple scales as well as application of activation functions. As the convolutional kernel sizes are negligible compared to the image size, the computation of VGG features also has a linear time computational complexity. In summary, all of the features can be computed at real-time rates in modern hardware, especially if GPUs are utilized.
 %paper
 \section{Distance Metrics}
 %paper
@@ -143,10 +199,10 @@ Figure \ref{fig:sim_comp} compares the effect of these three distance metrics fo
 
 \begin{figure} 
 \centering
-\caption{A comparison of dissimilarity metrics for histogram-based features. The leftmost image is the query image, the most similar five images from the dataset are shown in each row: Euclidean distance (first row), Bhattacharyya distance (second row), Earth Mover’s distance (third row).}
-\label{fig:sim_comp}
 \includegraphics[width=\textwidth]{figures/chapter2/16sims.png}
 \vspace{10pt}
+\caption{A comparison of dissimilarity metrics for histogram-based features. The leftmost image is the query image, the most similar five images from the dataset are shown in each row: Euclidean distance (first row), Bhattacharyya distance (second row), Earth Mover’s distance (third row).}
+\label{fig:sim_comp}
 \end{figure}
 
 %paper

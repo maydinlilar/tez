@@ -159,6 +159,8 @@ In Table~\ref{tab:p_individual}, the statistical significance of the difference 
 
 
 \begin{table}
+\caption{$p$ values for statistical significance between individual image features, calculated with Fisher's exact test.}
+\label{tab:p_individual}
 \centering
 \resizebox{\textwidth}{!}{\begin{tabular}{c | c c c c c c}
  &VGG16& VGG19& Color& Luminance& Texture & GIST \\
@@ -170,13 +172,13 @@ Luminance & $1.123x10^{-47}$ &$3.670x10^{-52}$ &$0.033$ &$1.0$ &$1.222x10^{-05}$
 Texture & $4.828x10^{-79}$ &$9.416x10^{-85}$ &$0.027$ &$1.222x10^{-05}$ &$1.0$ &$6.947x10^{-12}$ \\
 GIST &$1.963x10^{-33}$ &$3.302x10^{-37}$ &$3.720x10^{-06}$ &$0.014$ &$6.947x10^{-12}$ &$1.0$  
 \end{tabular}}
-\caption{$p$ values for statistical significance between individual image features, calculated with Fisher's exact test.}
-\label{tab:p_individual}
 \end{table}
 
 Another variable in the experiment analysis is the selection of tone mapping operators. Results given in Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2} shows that for a given image feature tone mapping operators are performing comparably. Table~\ref{tab:p_tmos} shows the $p$ values calculated with Fisher's exact test~\cite{fisher1922interpretation} between the VGG19 feature's correlation with the Phase II of the user study on images tone mapped with different tone mapping operators. While for most of the tone mapping operators the performance difference is not significant. For this feature, the differences between the best performing Ferradans et. al.'s TMO~\cite{ferradans2011analysis} and the successors Drago et al.'s~\cite{drago2003adaptive} and Reinhard et al.~\cite{reinhard2002photographic} TMOs are not significant ($p > 0.6$). However, the difference to the worst performing TMO, Pattanaik et al.'s TMO is significant with $p=0.001$.
 
 \begin{table}[ht]
+\caption{$p$ values for statistical significance between correlations of VGG19 features extracted on images tone mapped with different tone mapping operators, calculated with Fisher's exact test. User responses are used from Phase II of the experiment.}
+\label{tab:p_tmos}
 \resizebox{\textwidth}{!}{\begin{tabular}{c|c c c c c }
 \centering
  & Dra.~\cite{drago2003adaptive} & Mai.~\cite{mai2010optimizing} & Rein.(local)~\cite{reinhard2002photographic} & Rein. (global)~\cite{reinhard2002photographic} & Dur.~\cite{durand2002fast} \\
@@ -212,8 +214,6 @@ Man.~\cite{mantiuk2008display} &0.939 &0.788 &0.939 &1.0 &0.241 &0.032 \\
 Fer.~\cite{ferradans2011analysis}  &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\ 
 Pat.~\cite{pattanaik2000time}  &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
 \end{tabular}}
-\caption{$p$ values for statistical significance between correlations of VGG19 features extracted on images tone mapped with different tone mapping operators, calculated with Fisher's exact test. User responses are used from Phase II of the experiment.}
-\label{tab:p_tmos}
 \end{table}
 
 
