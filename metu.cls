@@ -774,7 +774,7 @@ to\hsize{\hfil\box\@tempboxa\hfil}
 \else
 \fi
 \vskip1.5cm plus0pt minus2mm \nointerlineskip
- \vbox{\parbox{14.25cm}{\hfill \@datelabel:  
+ \vbox{\parbox{14.25cm}{\hfill \@datelabel: \@15.02.2021
  \hspace{7em}}}
 \end{approvalpage}
 \gdef\@director{}\let\director\relax
