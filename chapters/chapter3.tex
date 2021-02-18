@@ -1,6 +1,8 @@
 \chapter{Features and Metrics}
 \label{chp:b3}
 
+In this thesis, image representations and the scheme that these representations are related constitutes the basics of the assessment of similarity between images. In this chapter, first, image features that are used to represent images are presented. The image features measure different aspects of the image and also differ in representation. Therefore, the metrics that estimate the distance between image features need to be chosen accordingly. Several distance metrics are presented in the second part of this chapter and for each feature the selected distance metric is given. 
+
 \section{Image Features}
 \label{sec:features}
 As the most fundamental part of many computer vision applications, image feature extraction is a widely studied research topic for the last several decades. There are numerous image features in the literature developed with different purposes which can be divided into two broad categories: global and local features. While global features like histograms of image properties represent the whole image with a single feature vector, local features like SIFT~\cite{lowe2004distinctive} or SURF~\cite{bay2006surf} are a collection of vectors representing small neighborhoods called interest regions. Although local features are used successfully for the applications like image classification or retrieval, this thesis focuses on global features to investigate the image similarity in a general sense. In this section, a review of global image features that have been used in this thesis is given. Table~\ref{tab:table_feature} lists these features together with their representations and the distance metric used for each feature. 

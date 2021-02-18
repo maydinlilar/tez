@@ -1,5 +1,5 @@
 % CHAPTER 1
-\chapter{introduction}
+\chapter{Introduction}
 \label{chp:b1}
 With the developments in digital imaging, the means of producing digital images became widely available and this led to vast amount of images and diverse applications. Assessing visual similarity of images is an important task for various applications including image retrieval and indexing~\cite{liu2007survey}, classification and clustering~\cite{kleiman2016toward}, image editing and style transfer~\cite{rawat2018find}. Depending on the context of the application, image similarity might be defined differently and the developed techniques differ accordingly. Due to its importance, significant amount of research is dedicated to measuring image similarity. 
 
@@ -21,13 +21,17 @@ Since image similarity is a perceptual phenomenon without ground truth, there ar
 Hence, there is a need for investigating visual similarity for HDR images. This need is the motivation of this thesis where assessing visual similarity between two images is experimentally investigated. To this end, subjective human judgments using crowdsourcing is collected and features are evaluated by comparing them to human judgments. To our knowledge this thesis serves as the first rigorous attempt to evaluate how visual similarity can be assessed between HDR images. Using the findings from the perceptual study, a tone mapping methodology is proposed where tone mapping parameters are automatically computed to impart a certain user-defined style to a given HDR image using the similarity between this image and several calibration images that are used to create this style.
 
 \section{Contributions and Outline of the Thesis}
-The main motivation of this thesis is to investigate visual similarity for HDR images. In Chapter~\ref{chp:b2}, a review of HDR imaging and image similarity is given. The image features and the distance metrics used in the rest of the thesis are given in Chapter~\ref{chp:b3}.
+The biggest motivation of this thesis is to investigate visual similarity for HDR images and demonstrate an application that benefits from these investigations. In this regard, the main contributions of this thesis can be listed as below: 
+\begin{itemize}
+    \item A tone mapping methodology, namely style-based tone mapping, that uses image similarity to automatically estimate the tone mapping parameters from the tone mapping parameters of a set of given images to follow a certain style,
+    \item A novel web-based interface to conduct a perceptual similarity experiment, and the assessment data collected through crowdsourcing,
+    \item Analysis on the experiment data, in the sense of the agreement of various image features and the corresponding distance metrics to the user responses, besides examining the effect of tone mapping operators,
+    \item A similarity model that consists of combination of image features with contribution of each feature estimated by user experiment data,
+    \item Two different methodologies to improve the presented tone mapping operator by employing the findings obtained by user experiment.
+\end{itemize}
 
-The first contribution of this thesis is a tone mapping methodology, namely style-based tone mapping, that uses image similarity to automatically estimate tone mapping parameters from the tone mapping parameters of a set of given images to follow a certain style. This tone mapping operator is presented in detail in Chapter~\ref{chp:b4}.
 
-%The improvements achieved by using the findings from the user study is also provided.
-
-Due to the subjective nature of the image similarity problem, an experimental study that assesses visual similarity between HDR images is conducted. The second contribution of this thesis is the novel web-based interface for the user experiment and the collected data through crowd-sourcing. The experimental setup and the details about data gathering is given in Chapter~\ref{chp:b5}. The third contribution is the investigation of the agreement of various image features and the corresponding distance metrics to the collected user data. In addition, a combined feature is estimated using experiment data. The effect of the tone mapping operator is also presented by repeating the analysis on the images that are tone mapped with commonly used tone mapping operators. These analyses on the user experiment are also given in the same chapter. In Chapter~\ref{chp:b6}, two methods to improve the style-based tone mapping operator by using the results obtained through user experiment are presented.
+The organization of the rest of this thesis is as follows, in Chapter~\ref{chp:b2}, a review of HDR imaging and image similarity is given. The image features and the corresponding distance metrics used in the rest of the thesis are given in Chapter~\ref{chp:b3}. Style-based tone mapping operator is presented in detail in Chapter~\ref{chp:b4} with some example styles replicated with the developed tool and the tone mapping results following these styles. Due to the subjective nature of the image similarity problem, an experimental study that assesses visual similarity between HDR images is conducted. The experimental setup and the details about data gathering is given in Chapter~\ref{chp:b5}. The analyses on the user experiment such as the correlation of the image features and the corresponding distance metrics to the user responses, and the effect of the tone mapping operators to these analyses are given in this chapter. In addition, two combined models that are estimated using experiment data are also given. In Chapter~\ref{chp:b6}, two methods to improve the style-based tone mapping operator by using the results obtained through user experiment are presented. 
 
 Lastly, discussion about the findings and the results are given in Chapter~\ref{chp:b7} and the summary of the thesis, several limitations and future directions are given in Chapter~\ref{chp:b8}.
 

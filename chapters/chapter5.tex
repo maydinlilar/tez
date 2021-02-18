@@ -1,6 +1,8 @@
 \chapter{Visual Similarity Experiments}
 \label{chp:b5}
 
+Image similarity is inherently a subjective phenomenon and like other subjective phenomena user experiments play an important role for a better understanding and improved models. Thus, within the scope of this thesis, a user experiment is conducted to investigate HDR image similarity. This chapter presents the image dataset used for the experiment, the experimental setup that allows the users to assess similarity between HDR image triplets, the data gathering through crowd sourcing and then experiment analysis that displays how the image features introduced in Chapter~\ref{chp:b3} correlates with human responses. Lastly, two models for a combined feature are proposed which is a combination of individual features and the weights of these models are estimated using experiment responses.
+
 \section{Dataset}
 
 The set of images used in visual similarity experiments should be sufficiently diverse. Although such datasets exists for LDR images, there is no specific similarity dataset for HDR images. However, there exists HDR image datasets that were created for various purposes and by different authors. We therefore decided to select 100 HDR images from various such sources to present observers with a diverse set of images2. The used datasets were: Fairchild’s HDR Photographic Survey~\cite{fairchild2007hdr}, HDR-Eye~\cite{nemoto2015visual}, DEIMOS~\cite{klima2011deimos}, Empa HDR Image Database~\cite{EmpaHDR}, and pfstools HDR Image Gallery ~\cite{mantiuk2007high}. Thumbnails for the used images are shown in Figure \ref{fig:dataset}.
@@ -462,6 +464,7 @@ By converting this response to probability values as in Equation \ref{eq:respons
 
 Given a triplet, if $Pr(x = left) > Pr(x =right)$ it is assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s~\cite{drago2003adaptive} TMO in the second phase of the experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
 
+
 \afterpage{
 \begin{landscape}
 \begin{table}
@@ -489,3 +492,5 @@ Pattanaik et al.~\cite{pattanaik2000time} & 64.94 & 79.84 & 6.6735 & -5.6657 & -
 \end{table}
 \end{landscape}
 }
+
+In this chapter, a crowdsourcing user study with the aim of HDR image similarity assessment is presented. The experiment data is collected in two phases with in total more than 1200 participants. While in the first phase, single response per image triplet is sought, the second phase extends the first phase by collecting three responses per image triplet. These responses analyzed separately for feature correlation and found out for the image triplets that have three consistent responses, the correlation scores are higher for both individual and combined features. Besides that, the effect of image format is also investigated and it is observed that tone mapped versions have higher correlations for hand crafted features and deeply learned features than raw HDR data and linearly scaled image. On the other hand, tone mapping operators perform comparably. Lastly, two models learnt from user data are proposed for the combined feature perform similarly with each other and better than the individual features. Among these models, duplet model is more suitable for applications in the sense that it does not require image triplets but estimates image similarity between image pairs. In the next chapter, it is shown how this model can be used to improve the style-based tone mapping application.

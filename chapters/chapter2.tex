@@ -127,21 +127,33 @@ In Figure~\ref{fig:tmos}, tone mapping results for the "Belgium House" HDR image
     \centering
     \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_mantiuk08.png}
     \caption{Mantiuk et al.~\cite{mantiuk2008display}}
-\end{subfigure}\hfill\\
-\begin{subfigure}[b]{0.33\textwidth}
-    \centering
+\end{subfigure}\hfill
+\begin{subfigure}[t]{\textwidth}
+\centering
+    \begin{subfigure}[t]{0.33\textwidth}
     \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_ferradans11.png}
     \caption{Ferradans et al.~\cite{ferradans2011analysis}}
 \end{subfigure}\hspace{-1pt}
-\begin{subfigure}[b]{0.33\textwidth}
+\begin{subfigure}[t]{0.33\textwidth}
     \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_pattanaik00.png}
     \caption{Pattanaik et al.~\cite{pattanaik2000time}}
 \end{subfigure}\hfill
+\end{subfigure}
+%\\
+%\begin{subfigure}[b]{0.33\textwidth}
+%    \centering
+%    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_ferradans11.png}
+%    \caption{Ferradans et al.~\cite{ferradans2011analysis}}
+%\end{subfigure}\hspace{-1pt}
+%\begin{subfigure}[b]{0.33\textwidth}
+%    \includegraphics[width=\textwidth]{figures/chapter2/tmos44/44_pattanaik00.png}
+%    \caption{Pattanaik et al.~\cite{pattanaik2000time}}
+%\end{subfigure}\hfill
 \caption{Tone mapping results for the "Belgium House" HDR image (image courtesy of Dani Lischinski) with different tone mapping operators. Note that pfstools~\cite{HDRGallery} implementation is used with default parameters.}
 \label{fig:tmos}
 \end{figure}
 
-\section{Tone Reproduction}
+\section{Tone Mapping from Style Perspective}
 Image reproduction is ultimately a subjective process where photographers and artists of all persuasions are free to reflect their own interpretation into the final rendering. For any task of reproduction, there is generally a vast range of choices from literal or realistic reproduction to those that significantly depart from reality. Since the early days of photography, many tools and systems have been developed to enable artists express their creativity~\cite{Adams80,Adams81,Adams83,White84}.
 
 Tone mapping, in the context of HDR imaging, is no different in creative expression than the art of photography. There is essentially an infinite amount of choices that an artist can make when tone mapping an HDR image for display purposes (Figure~\ref{fig:styles}). Perhaps, this is underscored by the large number of TMOs that have so far been developed that produce different outputs from the same HDR image~\cite{Rein2010}.

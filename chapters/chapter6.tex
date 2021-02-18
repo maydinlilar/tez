@@ -1,7 +1,6 @@
 \chapter{Improved Style-based Tone Mapping}
 \label{chp:b6}
 
-
 Although style based tone mapping has achieved some success for consistently tone mapping different images, the image similarity method given in Section \ref{sec:operation} can be improved with the findings from the conducted user study. In this chapter, two modifications of this method that are made possible by the experimental findings of the user study is given. The first technique uses all of the image features utilized in Chapter~\ref{chp:b5} with different weights to estimate tone mapping parameters in the operation phase. Meanwhile, the second technique relates tone mapping parameters and image features for the estimation.
 
 \section{Parameter Interpolation with All Features}
@@ -22,6 +21,14 @@ where $c_j$ is the coefficient of the $j^{th}$ feature, $\mathbf{f_j}$ is the $j
     \item Employing a weighted average of feature vector distances with weights obtained from a user experiment, compared to using equal weight.
 \end{itemize}
 
+In Figure~\ref{fig:algo_updated}, the modified style-based tone mapping algorithm is shown. Note that while the calibration phase has not changed, the operation phase has been adjusted with the changes listed above compared to the initial version of the algorithm given in Figure~\ref{fig:calibration_operation}. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/algorithm_updated.png}
+    \caption{Modified style-based tone mapping algorithm with the findings of the user experiment. Compared to the initial method given in Figure~\ref{fig:calibration_operation}, more representative set of features are extracted and distances between these features are computed separately. Besides, instead of using equal weights on feature distances, the weights estimated from user study are employed.}
+    \label{fig:algo_updated}
+\end{figure}
 
 \section{Parameter Interpolation with Related Features}
 \label{sec:related_features}
