@@ -32,7 +32,7 @@ This technique uses a windowing approach to select a desired exposure range from
 \end{center}
 \end{figure}
 
-In each experimental session, 33 such image triplets were displayed to the observers. Thus, an experimental session consisted of 33 trials. In each trial, the observers were asked to choose which of the two test images was visually more similar to the reference image. Here it is important to note that we did not ask users to decide for a specific type of similarity such as object, color, etc. By intentionally leaving the definition of visual similarity vague, we hoped to achieve a range of responses, which in overall, would converge to a common sense understanding for similarity. All trials, except for the verification ones, were generated randomly from the dataset during the runtime of the experiment. 
+In each experimental session, 33 such image triplets were displayed to the observers. Thus, an experimental session consisted of 33 trials. In each trial, the observers were asked to choose which of the two test images was visually more similar to the reference image. All trials, except for the verification ones, were generated randomly from the dataset during the runtime of the experiment. 
 
 Three of the experiment triplets were used for verification. They contained an obviously similar reference and test image pair to evaluate the reliability of an observer as shown in Figure \ref{fig:verficiation}. As seen from the figure, the test image that is similar to the reference image is another image from the same scene. These images are not used in the actual part of the experiment, and do not belong to the dataset of 100 images shown in Figure \ref{fig:dataset}.
 
@@ -50,19 +50,26 @@ If an observer failed to provide the correct answer even for one of these trials
 \label{sec:crowd_sourcing}
 Crowdsourcing has been used in many computer vision problems to collect non-expert data~\cite{kovashka2016crowdsourcing}. In this thesis, in order to reach as many people as possible, the experiment was published at Microworkers crowdsourcing platform\footnote{www.microworkers.com}. For each completed experiment 0.3\$ were paid to the participants.
 
-One of the challenges of data crowdsourcing is eliminating users that give unreliable responses, this may due to not being qualified for the task or just being a spammer~\cite{garcia2016challenges}. To minimize the problem of users being not qualified, the crowd group of English speaking, high qualified users are selected from the crowdsourcing platform. Even though the experiment itself does not require language proficiency, the instructions at the beginning of the experiment is important for users to successfully complete the experiment. The users are in the \emph{high qualified} crowd, if they have been done other crowdsourcing tasks before and got positive feedback. Another measure taken to achieve reliable responses is using verification triplets.
+At the beginning of the experiment, an introductory page, given in Figure~\ref{fig:experiment_start}, is displayed to the user. This page first describes the task to be fulfilled: complete a set of trials by picking the comparison image that is more similar to the reference image. Here it is important to note that the users are not asked to decide for a specific type of similarity such as object, color, etc. By intentionally leaving the definition of visual similarity vague, it is hoped to achieve a range of responses, which in overall, would converge to a common sense understanding for similarity.
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.85\textwidth]{figures/chapter3/experiment_start.png}
+\caption{Start page of the experiment, that describes the task and collects some information about the user.}
+\label{fig:experiment_start}
+\end{center}
+\end{figure}
 
-In total, 165 sessions were discarded due to incorrect responses given to the verification trials. Age, gender, and familiarity with computer graphics/image processing distribution of the participants are shown in Figure \ref{fig:age_gender_cgi}. This information was asked to the users at the beginning of the experiment.
+After giving the instructions about the experiment, the user is informed about the expected time to finish the experiment when done in a normal pace. This is followed by some warnings about browser usage during the experiment and unsuitable devices. Then, a form is presented to collect some information about the participants. In Figure~\ref{fig:age_gender_cgi}, the distribution of age, gender, and familiarity with computer graphics/image processing of the participants according to the data entered to this form is shown. Finally, the user can start the experiment on demand by pressing the provided button labeled as "Start Experiment".
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=\textwidth]{figures/chapter3/age_gender_cgi.pdf}
-\caption{Age, gender, and computer graphics/image processing familiarity distribution of the participants.
-%paper
-}
+\caption{Age, gender, and computer graphics/image processing familiarity distribution of the participants.}
 \label{fig:age_gender_cgi}
 \end{center}
 \end{figure}
+
+One of the challenges of data crowdsourcing is eliminating users that give unreliable responses, this may due to not being qualified for the task or just being a spammer~\cite{garcia2016challenges}. To minimize the problem of users being not qualified, the crowd group of English speaking, highly qualified users are selected from the crowdsourcing platform. Even though the experiment itself does not require language proficiency, the instructions at the beginning of the experiment is important for users to successfully complete the experiment. The users are in the \emph{highly qualified} crowd, if they have been done other crowdsourcing tasks before and received some positive feedback. Another measure taken to achieve reliable responses is using verification triplets. In total, 165 sessions were discarded due to incorrect responses given to the verification trials. 
 
 \subsection{Phase I}
 \label{sec:exp_phase_I}
