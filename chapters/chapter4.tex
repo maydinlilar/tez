@@ -236,6 +236,30 @@ Pattanaik et al.~\cite{pattanaik2000time} & 78.66 & 78.11 & 57.33 & 58.66 & 55.7
 %\end{landscape}
 %}
 
+\subsection{Feature Learning with Triplet Networks}
+For both of the phases of the user experiments and for different tone mapping operators the deeply learned features correlate better than the other features as given in Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2}. The deep learning features are the last fully connected layer of two deep CNN architectures, VGG16 and VGG19, that are trained on ImageNet dataset. There are many studies that report better results achieved with transfer learning by taking a pretrained network on a different dataset and then training this dataset on the actual dataset~\cite{ouyang2016factors}. For most of the studies including this thesis, the reason of choosing finetuning over training a CNN from scratch is the insufficient amount of labeled data and the required training time for the huge datasets like ImageNet that has millions of images.
+
+Both VGG16 and VGG19 are classification networks, the input for these network is a single image and the output is the classification result. The collected user data is not suitable for finetuning these networks. However, there are architectures that consists of multiple CNNs for training comparison data. One example is Siamese architecture~\cite{hadsell2006dimensionality}. This network takes two images as input and contains two different CNNs that can be trained for classification or feature learning. A more recent architecture is Triplet Network~\cite{vo2016localizing}, which takes three images as input, compares triplets simultaneously and outputs the probability of the given triplet is a valid triplet, the reference image is closer to the first image. In this thesis, a triplet network architecture called DeepRanking~\cite{wang2014learning} is trained on the experimental data. This network has three identical deep neural networks with shared parameters. These deep neural networks learns an image embedding $f$ that will be the input of the last layer called ranking layer which minimizes the hinge loss:
+\begin{equation}
+    l(p_i, p{_i}{^+}, p{_i}{^-}) = max \{0, g + D(f(p_i), f(p{_i}{^+})) - D(f(p_i), f(p{_i}{^-}))\},
+\end{equation}
+where $p_i$ is the input image, $p{_i}{^+}$ is the similar image and $p{_i}{^-}$ is the less similar image, $D$ is the Euclidean distance between learned image features and $g$ is a regularizer parameter of the gap between image pairs. In the Table~\ref{tab:triplet}, the correlation scores obtained from this network trained on the experiment data is given.
+
+\begin{table}[ht]
+\caption{Correlation results obtained with a triplet network trained on Phase I of the experiment.}
+\label{tab:triplet}
+\centering
+\begin{tabular}{c|c c c}
+    \textbf{Training} & \textbf{Number of Triplets} & \textbf{Epocs} & \textbf{Correlation}  \\
+\hline
+    Training I & 1500 & 25 & 60.50 \\
+    Training II & 1500 & 50 & 59.72 \\
+    Training III & 15000 & 25 & 61.09
+\end{tabular}
+\end{table}
+
+For the training of this network Phase I of the experiment is used. Although Phase I is less reliable compared to Phase II, it has more triplets to train with. The selected tone mapping operator is the tone mapping operator of Durand \& Dorsey et. al~\cite{durand2002fast}. For the pretrained deep neural network for DeepRanking VGG16 is used. In total three trainings are evaluated, in the first training 1500 triplets are used and the network is trained for 25 epocs. The correlation is calculated similarly as Table~\ref{tab:ind_correlation_p1} but on the triplets that has not been used for training. The first evaluation is resulted with \textasciitilde 5\% lower correlation than VGG16 feature. For the second training, the tranining duration is doubled with 50 epocs but this did not increase the correlation, on the contrary it is slightly decreased possibly due to overfitting. For the third training, the number of triplets used for training increased 10 times and a slight increase in correlation is observed. However, it was not possible to train the network with more data since the Phase I of the user experiment has approximately 18K triplets.
+
 
 \subsection{Statistical Analysis}
 In Table~\ref{tab:p_individual}, the statistical significance of the difference between each individual feature correlations are given. Fisher's exact test~\cite{fisher1922interpretation} is used for the calculations, image features are calculated on images tone mapped with Ferradans et al.~\cite{ferradans2011analysis} TMO, and correlation is calculated against Phase II of the experiment. This analysis shows that, the difference for the correlations of VGG16 and VGG19 features are not that significant and also Color - Luminance - Texture performances are rather close. On the other hand, deep learning features are significantly better than the other features and similarly, GIST feature is significantly better than Color and Texture features.
@@ -298,8 +322,6 @@ Fer.~\cite{ferradans2011analysis}  &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\
 Pat.~\cite{pattanaik2000time}  &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
 \end{tabular}}
 \end{table}
-
-
 %\begin{landscape}
 %\begin{table}[ht]
 %\resizebox{\textheight}{!}{\begin{tabular}{c|c c c c c c c c c c c}
@@ -324,7 +346,7 @@ Pat.~\cite{pattanaik2000time}  &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\
 
 \subsection{Combined Feature Correlation}
 
-Given the individual correlations reported in the previous tables Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2}, a natural question that follows is if the features can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of logistic regression analysis are performed yielding two related but different models.
+Given the individual correlations reported in the tables Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2}, a natural question that follows is if the features can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of logistic regression analysis are performed yielding two related but different models.
 
 %\begin{table}
 %\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase II of the experiment}
