@@ -1,503 +1,318 @@
-\chapter{Visual Similarity Experiments}
+\chapter{Style-based Tone mapping}
 \label{chp:b5}
 
-Image similarity is inherently a subjective phenomenon and like other subjective phenomena user experiments play an important role for a better understanding and improved models. Thus, within the scope of this thesis, a user experiment is conducted to investigate HDR image similarity. This chapter presents the image dataset used for the experiment, the experimental setup that allows the users to assess similarity between HDR image triplets, the data gathering through crowd sourcing and then experiment analysis that displays how the image features introduced in Chapter~\ref{chp:b3} correlates with human responses. Lastly, two models for a combined feature are proposed which is a combination of individual features and the weights of these models are estimated using experiment responses.
+HDR image similarity has many applications, and one of these applications on tone mapping is presented in this chapter. The tone mapping operator that is depicted in the following sections named as style-based tone mapping, consists of a methodology that employs image similarity to tone map HDR images consistently according to a style without manual parameter adjustments. In this chapter, first the problem definition and the details of the method are given followed by the obtained tone mapping results.
 
-\section{Dataset}
+\section{Problem Definition}
 
-The set of images used in visual similarity experiments should be sufficiently diverse. Although such datasets exists for LDR images, there is no specific similarity dataset for HDR images. However, there exists HDR image datasets that were created for various purposes and by different authors. We therefore decided to select 100 HDR images from various such sources to present observers with a diverse set of images2. The used datasets were: Fairchild’s HDR Photographic Survey~\cite{fairchild2007hdr}, HDR-Eye~\cite{nemoto2015visual}, DEIMOS~\cite{klima2011deimos}, Empa HDR Image Database~\cite{EmpaHDR}, and pfstools HDR Image Gallery ~\cite{mantiuk2007high}. Thumbnails for the used images are shown in Figure \ref{fig:dataset}.
+Tone mapping operators aim to reduce the dynamic range of an HDR image to display it on an low dynamic range display devices. The existence of numerous tone mapping operators that are available paved the way for many studies that are conducted for selecting the best one~\cite{parraga2018tone}. However, tone mapping can be conducted for different purposes, and rendering the resulting images to follow a consistent style can be one of them. For example, in a movie production process, making all frames consistently tone mapped, regardless of the content of the frames, can be a desired operation to impart a certain look and feel to the viewers. Although obtaining different renderings from tone mapping operators is partly achievable by using different tone mapping parameters, some tone mapping operators have none~\cite{Dura02} or few parameters~\cite{Fatt02} while others~\cite{Photomatix2010} have too many. Besides, even though one set of parameters are found for a certain image to depict a certain style of rendering, the same set of parameters would not yield with the same look when applied to other images. %that has different characteristics.
+
+In this chapter, style based tone mapping operator that aims to consistently tone map different HDR images with the defined style is proposed. Figure \ref{fig:styles} shows different styles for the same images created by an artist. The application depicted in this thesis approaches the problem of defining a style by presenting the user an HDR image and with the help of the tool developed, ask the user to change the parameters until the image matches the desired look. By repeating this process for a small set of calibration images, we aim to \emph{learn} the style. Applying the learned style from calibration images to the previously unseen images is essentially a visual image similarity problem.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/chapter3/dataset.png}
-\caption{HDR images used in the visual similarity experiments.}
-\label{fig:dataset}
+\includegraphics[width=\textwidth]{figures/chapter5/styles.png}
+\caption{Different artists may prefer different tone reproductions of the same HDR image. The same artist may also choose to produce different styles based on the situational/contextual considerations. The images reproduced by a professional artist using a different tool (top half) are replicated using our operator (bottom half). Presented algorithm can also learn the styles of an artist and produce results consistent with them.}
+\label{fig:styles}
+\end{center}
+\end{figure}
+%First, the problem of relating the input HDR image and the calibration images are solved with a method that has been commonly used for LDR images in the earlier work and then two different but related methods that uses the findings from the user experiment of visual similarity for HDR images discussed in Chapter \ref{chp:b3} and Chapter \ref{chp:b4} are employed.
+%To summarize, the primary difference of the current method from the earlier work is its ability to learn about the various tone mapping styles that may be desired by an artist from a small set of calibration images. These styles can then be applied when tone mapping a new HDR image. Our algorithm is the first of its kind that gives the ability to batch process a large number of HDR images with respect to different styles.
+
+\section{Related Work}
+Image reproduction is ultimately a subjective process where photographers and artists of all persuasions are free to reflect their own interpretation into the final rendering. For any task of reproduction, there is generally a vast range of choices from literal or realistic reproduction to those that significantly depart from reality. Since the early days of photography, many tools and systems have been developed to enable artists express their creativity~\cite{Adams80,Adams81,Adams83,White84}.
+
+Tone mapping, in the context of HDR imaging, is no different in creative expression than the art of photography. There is essentially an infinite amount of choices that an artist can make when tone mapping an HDR image for display purposes (Figure~\ref{fig:styles}). Perhaps, this is underscored by the large number of TMOs that have so far been developed that produce different outputs from the same HDR image~\cite{Rein2010}.
+
+Most TMOs fail to provide sufficient freedom to artists to express their creativity and rather focus on visibility or photographic look. However, there are a few TMOs that are designed to enable artistic freedom such as the stroke-based interface that was proposed by Lischinski et al.~\cite{Lischinski2006}. This algorithm allows the user to select image regions using brush strokes and set different tone mapping parameters for each region. These parameters are then extrapolated to the entire image using an edge-preserving energy minimization method. Paris et al.~\cite{paris2011local} gives users the possibility of enhancing details or edge-preserving smoothing while tone mapping. This method first applies detail modifying local Laplacian filters on the log intensity of the image and then map the intensities to displayable range by scaling. Aubry et al.~\cite{aubry2014fast} offers a fast implementation of local Laplacian filters and also demonstrates how this filter can be used for photographic style transfer. Given a model image, this iterative method uses local Laplacian filters for gradient histogram matching for local contrast modification and intensity histogram matching for global contrast modification. Tone mapping is achieved through the intensity matching since the method matches the same dynamic range of the model image.
+
+Another algorithm that allows a wide range of possibilities during tone mapping is the generic TMO~\cite{Mantiuk08a}. This operator hinges on the idea that although a large number of TMOs exist, the majority of them can be modeled using a generic tone curve followed by local modifications. The authors have demonstrated that by using a small set of parameters, a skilled artist can match the output of any TMO with the generic TMO. Although these algorithms offer expressive freedom to the artist, they have no notion of \emph{learning} the artist's preference. In fact, it has been shown by the authors that the same set of parameters can give rise to vastly different outputs for different images~\cite{Mantiuk08a}. As such, using these operators to automatically tone map a large number of images is impractical. 
+
+There are several LDR retouching studies that are similar to the proposed style based tone mapping operator in the sense of enhancing images by using a set of training images ~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, these studies do not focus on HDR image tone mapping.
+
+%There are several LDR retouching studies that allow enhancing a new image using a set of previous training examples~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, their focus is not HDR image tone mapping.
+
+Recently, deep neural networks are also used for learning image adjustment parameters. Some of these studies uses a training set of high quality images and learns the enhancement parameters in an unsupervised manner~\cite{park2018distort, chen2018deep,ignatov2018wespe}. These methods aim to enhance the general quality of the given image instead of applying a specific style. Yan et al.~\cite{yan2016automatic} on the other hand, proposes to learn a computational model of a style from image pairs, an untouched image and a stylized version. Their method incorporates high level semantic information of the pixels as well as local and global features of the image. Another study with a similar goal, Hu et al.~\cite{hu2018exposure} uses unpaired data, a set of stylized images, for learning an operation sequence that will style an input image when applied. The benefit of learning modification steps is it makes the style explainable, which most of the deep learning based image enhancements methods lack. While these methods aim to learn predefined style, Lee et al.~\cite{lee2016automatic} uses deep learning based semantic search to find similar images from a large collection and applies the styles of these images to the given image, by using a transfer function for color and luminance statistics, which brings the benefit of automatically selecting candidate styles. Similar to the previous LDR retouching studies, these methods also do not aim to tone map HDR images.
+
+In summary, style based tone mapping differs from the previous methods by means of learning different tone mapping styles from a small set of tone mapped calibration images. Then, new HDR images, which may be created from vastly different scenes, can be tone mapped according to these learnt styles. In this sense, style based tone mapping is the first method that allows to batch process a set of HDR images consistently according to the created style.
+
+\section{Method}
+Style based tone mapping ~\cite{akyuz2013style} consists of two consecutive phases, namely \emph{calibration} and \emph{operation}. Calibration is the phase where the user defines a style and by manually adjusting the provided parameters tone maps a small set of images until the tone mapped image depicts the newly defined style. The next phase, operation is the phase that the user given HDR image is tone mapped automatically with the selected predefined style in the calibration phase by estimating the tone mapping parameters from the calibration image tone mapping parameters. Figure \ref{fig:calibration_operation} shows the style based tone mapping algorithm steps and these steps are explained in detail in the following sections.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{figures/chapter5/algorithm.pdf}
+\caption{Style based tone mapping is comprised of a calibration and operation phase. The artist tone maps several images during calibration which results in a set of parameters. During operation, these parameters are interpolated based on image similarity to find the tone mapping parameters for the given image.}
+\label{fig:calibration_operation}
 \end{center}
 \end{figure}
 
+\subsection{Calibration}
+In the calibration phase, first the user is asked to pick a name for the new style to be created, and then the user is asked to tone map a fixed set of calibration images. Assigning a name to the style would be helpful for the user to stay consistent with the style while tone mapping the calibration images. In addition, once the style is created and saved, this will allow the user to have many predefined styles in preset library and reuse them. 
 
-\section{Experiment Setting}
-%paper
-To measure perceptual similarity between HDR images, we conducted a 2AFC experiment. The experiment is publicly available\footnote{http://user.ceng.metu.edu.tr/~merve/userstudy/}. As we needed a large number of responses, we designed a web-based interface to collect crowdsourcing data. We used the HDRHTML technique~\cite{mantiuk2009visualizing} for visualizing HDR images on web browsers.
+Calibration images should be representative enough for different environments that has different characteristics and at the same time distinctive from each other as much as possible to keep the number of the calibration images low. The number of calibration images directly affects the time spent in the calibration phase, so although more calibration images would represent different environments better, in order not to overwhelm the user, the number of calibration images is chosen in a way that the user can finish the calibration phase in a reasonable time.
 
-This technique uses a windowing approach to select a desired exposure range from the HDR image. Multiple exposures are encoded by combining a small set of basis images with opacity coefficients. The tone-curves of these basis images are approximated as a piece-wise linear function. Instead of finding optimal tone-curves and opacity coefficients, HDRHTML uses a precomputed optimal solution and use these tone-curve points and opacity coefficients for all images for fast processing. After basis images are created using the tone-curves, these basis images are used to reconstruct multiple exposures and gives user the control over exposure settings with a slider. By dynamically adjusting the position of the slider, the user can efficiently view the entire exposure range contained within the HDR image. These sliders are normally overlayed with the image histogram. We removed this overlay to prevent the image histogram from affecting the observers’ decisions. Figure \ref{fig:experiment} shows a sample trial from the experiment. An HDR reference image was shown at the top and two HDR test images were shown at the bottom. The sliders, which were mandatory to be adjusted, allowed all images to be inspected at different exposure levels.
+Calibration images are selected in a semi automatic way. First, all images are taken from Fairchild's HDR image dataset~\cite{fairchild2007hdr} and then converted a feature space and using k-means algorithm each image in the dataset assigned to a cluster, which resulted in six clusters given in Appendix~\ref{app:clusters}. After clusters are obtained, one calibration image is hand-selected from each cluster, yielding six calibration images in total, which are shown in Figure \ref{fig:calibration_images}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/chapter3/experiment.png}
-\caption{A sample trial from the experiment. The observers were asked to choose the most similar image to the reference image (top) from the test images (bottom). All images could be examined at different exposure levels by adjusting their sliders.
+\includegraphics[width=\textwidth]{figures/chapter5/temp_calibration_images.png}
+\caption{Calibration images
 %paper
 }
-\label{fig:experiment}
+\label{fig:calibration_images}
 \end{center}
 \end{figure}
 
-In each experimental session, 33 such image triplets were displayed to the observers. Thus, an experimental session consisted of 33 trials. In each trial, the observers were asked to choose which of the two test images was visually more similar to the reference image. All trials, except for the verification ones, were generated randomly from the dataset during the runtime of the experiment. 
+The calibration phase starts with naming the style, and then the user is presented with the tone mapping interface. With using this interface the user is required to tone map the calibration images one after another with the desired style. The manual tone mapping procedure is basically adjusting tone mapping parameters given in Table \ref{tab:tonemap_parameters} with the provided sliders.
 
-Three of the experiment triplets were used for verification. They contained an obviously similar reference and test image pair to evaluate the reliability of an observer as shown in Figure \ref{fig:verficiation}. As seen from the figure, the test image that is similar to the reference image is another image from the same scene. These images are not used in the actual part of the experiment, and do not belong to the dataset of 100 images shown in Figure \ref{fig:dataset}.
+\begin{table}
+\caption{Tone mapping parameters for style-based tone mapping}
+\label{tab:tonemap_parameters}
+\centering
+\begin{tabular}{|c|c|}
+\hline 
+Brightness ($b$) & Prct. mapped to half-max intensity \\
+Contrast ($c$) & Slope of the tone curve at $b$ \\
+Black point ($bp$) & Prct. clamped to min intensity \\
+White point ($wp$) & Prct. clamped to max intensity \\
+Color saturation ($c$) & Saturation control exponent \\
+\hline
+Small detail strength ($\lambda_s$) & UM factor for small details \\
+Medium detail strength ($\lambda_m$) & UM factor for medium details \\
+Large detail strength ($\lambda_l$) & UM factor for large details \\
+\hline
+\end{tabular}
+\end{table}
 
-\begin{figure}
-\begin{center}
-\includegraphics[height=0.85\textheight]{figures/chapter3/verification_small.jpg}
-\caption{Verification triplets, shown as 3rd, 10th and 16th trials in the experiment sessions. }
-\label{fig:verficiation}
-\end{center}
-\end{figure}
+The tone mapping operator is a modified version of Generic TMO~\cite{mantiuk2008modeling}. Generic TMO is able to model many existing tone mapping operators, both local and global with a tone curve followed by a spatial modulation function. It is noted in~\cite{mantiuk2008modeling} that same set of parameters yields very different results for different images. Style based tone mapping uses Generic TMO with the following modifications.
 
-If an observer failed to provide the correct answer even for one of these trials, his or her data was discarded as being unreliable. These trials were distributed across the experiment to ensure that observers were attentive throughout. Before the experiment began, observers were informed about their task and the expected duration of the experiment, which was at most 20 minutes at a normal pace. During the experiment, observers were required to use the exposure sliders for each image before they made selection. Image selection was done by clicking on one of the test images. The selection was indicated using a green border around the selected image. Observers could change their selection until they pressed the “Next” button. The progress of an observer was indicated using a small progress bar at the bottom center of the screen. At the end of the experiment, observers were informed with a final page confirming the conclusion of the experiment and were presented with unique session ids. They were required to enter this id to the crowdsourcing platform to verify that they have finished the experiment.
+The tone mapping parameters of Generic TMO are replaced with their percentile counterparts in order to make the algorithm less image dependent and make it easier for user to have an understanding about the parameters. For example, the parameter \emph{Brightness} in style based tone mapping with the value 50 would correspond to the median brightness value of the HDR image in Generic TMO's \emph{b} parameter. Likewise, for the parameter \emph{White point}, the value 95 would mean 5\% of the brightest pixels will be burned out. As one may imagine, representing the tone mapping parameters as percentiles is not sufficient to achieve the same effect on different images. In order to achieve this, style based tone mapping uses parameter interpolation to use \emph{similar} parameters to \emph{similar} images as described in Section \ref{sec:operation}. 
 
-\section{Data Collection}
-\label{sec:crowd_sourcing}
-Crowdsourcing has been used in many computer vision problems to collect non-expert data~\cite{kovashka2016crowdsourcing}. In this thesis, in order to reach as many people as possible, the experiment was published at Microworkers crowdsourcing platform\footnote{www.microworkers.com}. For each completed experiment 0.3\$ were paid to the participants.
+The second modification to Generic TMO belongs to spatial modulation. In ~\cite{mantiuk2008modeling}, a linear combination of band-pass filters are used as spatial modulation function. These filters are from modified Cortex transform and applied after global tone curve modulation. On the other hand, in style based tone mapping, local modulation is applied in multiple scales and afterwards global operation is performed. This has the benefit of adjusting detail level before the HDR compression is applied and it gives better results. 
 
-At the beginning of the experiment, an introductory page, given in Figure~\ref{fig:experiment_start}, is displayed to the user. This page first describes the task to be fulfilled: complete a set of trials by picking the comparison image that is more similar to the reference image. Here it is important to note that the users are not asked to decide for a specific type of similarity such as object, color, etc. By intentionally leaving the definition of visual similarity vague, it is hoped to achieve a range of responses, which in overall, would converge to a common sense understanding for similarity.
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.85\textwidth]{figures/chapter3/experiment_start.png}
-\caption{Start page of the experiment, that describes the task and collects some information about the user.}
-\label{fig:experiment_start}
-\end{center}
-\end{figure}
+For detail modulation several approaches has been tested, unsharp masking (UM), bileteral filtering~\cite{Tomasi98} and gradient reversal removed BF~\cite{Bae2006}. While BF-based filters results with less halo, they are computationally expensive, unlike UM, which is prone to halos but computationally efficient. Besides, UM is shown to be improve sharpness and local contrast in an earlier study~\cite{Trenta2012}. It is decided to use UM even though it may introduce halos. For some cases, halos may be also introduced by the user in order to create an unrealistic style.
 
-After giving the instructions about the experiment, the user is informed about the expected time to finish the experiment when done in a normal pace. This is followed by some warnings about browser usage during the experiment and unsuitable devices. Then, a form is presented to collect some information about the participants. In Figure~\ref{fig:age_gender_cgi}, the distribution of age, gender, and familiarity with computer graphics/image processing of the participants according to the data entered to this form is shown. Finally, the user can start the experiment on demand by pressing the provided button labeled as "Start Experiment".
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=\textwidth]{figures/chapter3/age_gender_cgi.pdf}
-\caption{Age, gender, and computer graphics/image processing familiarity distribution of the participants.}
-\label{fig:age_gender_cgi}
-\end{center}
-\end{figure}
-
-One of the challenges of data crowdsourcing is eliminating users that give unreliable responses, this may due to not being qualified for the task or just being a spammer~\cite{garcia2016challenges}. To minimize the problem of users being not qualified, the crowd group of English speaking, highly qualified users are selected from the crowdsourcing platform. Even though the experiment itself does not require language proficiency, the instructions at the beginning of the experiment is important for users to successfully complete the experiment. The users are in the \emph{highly qualified} crowd, if they have been done other crowdsourcing tasks before and received some positive feedback. Another measure taken to achieve reliable responses is using verification triplets. In total, 165 sessions were discarded due to incorrect responses given to the verification trials. 
-
-\subsection{Phase I}
-\label{sec:exp_phase_I}
-In the first phase of the experiment, randomly selected triplets are shown to the users without any restrictions on the image selection. After collecting the experimental results, and eliminating the triplets from invalid sessions, it was found that 18747 unique image triplets were judged by the observers. This amounts to approximately 11.6\% of the total possible triplets that can be obtained from 100 images, $C(100, 3)$. Experiment sessions were independent and random for each participant, but it was guaranteed that a single session consisted of only unique triplets. 
-
-This design resulted in a single response for the majority of the triplets. Some triplets received two responses and only a few received three or more. As such this first phase of the experiment is considered as a random exploration of all possible comparisons. However, as judging similarity based on a single response could be too subjective, the experiment is extended as discussed below to collect multiple responses for each triplet.
-
-\subsection{Phase II}
-\label{sec:exp_phase_II}
-The first phase of the experiment was extended to obtain three evaluations per triplet. Unlike the first phase where triplets were generated randomly, the second phase solely used the triplets that had been evaluated in the first phase of the experiment. To achieve this, the triplets sorted from the first phase in descending order by the number of responses collected. If a triplet had more than three responses, three of the responses are randomly selected. The triplets with exactly three responses were used as is. These two cases occurred very rarely. Next, triplets with two responses, and then a single response were presented randomly to obtain a total of 4990 triplets that had been evaluated three times. Among these thrice evaluated triplets, 2170 triplet were judged consistently by all three observers. The remaining 2820 triplets generated two-to-one responses. Similar to the first part of the experiment, the second part also contained the same validity checks to eliminate the responses of inattentive observers.
-
-\section{Experiment Analysis}
-
-Having discussed the details of crowdsourcing study in Section \ref{sec:crowd_sourcing} and experimented features in Section \ref{sec:features}, this section investigates how the human judgments and the image features are related. First analysis method for assessing the correlation between individual feature type and the experiment results is given. Then, two possible methods to combine the features for developing a more effective similarity model is discussed. In the evaluations, different formats for HDR images are employed in order to measure the effect of the image format to the proposed methods. 
-
-\subsection{Preprocessing}
-In evaluations, HDR images used directly, as well as by linear scaling and applying several tone mapping operators. For linear scaling, 5\% of the brightest pixels and 5\% of the darkest pixels are discarded by setting them to 95th and 5th percentile of the pixels values respectively. The reason behind this step is to eliminate extreme values from the HDR images that may also introduced by hardware. 
+The detail modulation is achieved by first creating three low-pass images in the logarithmic domain for $small$, $medium$ and $large$ details.
+\begin{align}
+L'_{\sigma_s} &= g _{\sigma_s} * L', \\
+L'_{\sigma_m} &= g _{\sigma_m} * L', \\
+L'_{\sigma_l} &= g _{\sigma_l} * L', 
+\end{align}
+where $L' = log L$ and $g_\sigma$ are 2D Gaussian filters are different scales. $\sigma_s$, $\sigma_m$, and $\sigma_l$ are set to 0.0625\%, 0.3125\% and 0.625\% of the minimum image dimension respectively. Then these low pass images are used to enhance different scales with the chosen detail factor parameters $\lambda$.
+\begin{equation}
+    L_{sm} = e^{L' + \lambda_s(L' - L'_{\sigma_s}) + \lambda_m(L'_{\sigma_s} - L'_{\sigma_m}) + \lambda_l(L'_{\sigma_m} - L'_{\sigma_l})}
+\end{equation}
+$L_{sm}$, spatially modulated luminance image, then fitted to the tone curve as in~\cite{mantiuk2008modeling}. 
 
 \begin{equation}
-    I' = \begin{cases}
-    P_5 (I), &\text{ if $I < P_5(I)$} \\
-    I, &\text{ if $P_5(I) \leq I \leq P_{95}(I) $} \\
-    P_{95}(I), &\text{if $I > P_{95}(I)$}, \\
+    TC(L_{sm}) = 
+    \begin{cases}
+    0 &\text{  if  $L_{sm}' \leq b - d_l$ } \\
+    \frac{1}{2}c {{L_{sm}' - b}\over{1 - a_l(L_{sm}'-b)}} + \frac{1}{2} &\text{ if $b - d_l < L_{sm}' \leq b $ } \\ 
+    \frac{1}{2}c {{L_{sm}' - b}\over{1 + a_h(L_{sm}'-b)}} + \frac{1}{2} &\text{ if $b < L_{sm}' \geq b + d_h$} \\ 
+    1 &\text{ if  $L_{sm}' > b + d_h$}
     \end{cases}
 \end{equation}
 
-where $I$ denotes the original image values and $I'$ is after the pixel values outside of the range are removed. Then HDR image is linearly scaled with
+where $L_{sm}'$ is the logarithm of the spatially modulated luminance $c$ is the contrast, and parameters $b$, $d_l$ and $d_h$ are the absolute values of the user given parameters in percentiles for brightness, black point and white point respectively. Parameters $a_h$ and $a_l$ are contrast compression for light and dark areas computed from ~\cite{mantiuk2008modeling}.
 
 \begin{equation}
-    lin(I)  = {{I' - I'_{min}} \over {I'_{max} - I'_{min}}}, 
+    a_l = {{c . d_l-1} \over {d_l}} \text{ and } a_h = {{c . d_h-1} \over {d_h}}
 \end{equation}
 
-for each color channel separately.
-
-Besides of using original and linearly scaled HDR images, tone mapped version of the images are also evaluated. For this purpose commonly used tone mapping operators Mai et al. ~\cite{mai2010optimizing}, Reinhard et al. (local) ~\cite{reinhard2002photographic}, Reinhard et al. (global) ~\cite{reinhard2002photographic}, Durand \& Dorsey~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2006perceptual}, Reinhard \& Devlin~\cite{reinhard2005dynamic}, Fattal et al.~\cite{durand2002fast}, Mantiuk et al.~\cite{mantiuk2008display}, Ferradans et al.~\cite{ferradans2011analysis} and Pattanaik et al.~\cite{pattanaik2000time} are used. The implementations of these TMOs are available in opensource PFStmo software library ~\cite{mantiuk2007high}, which provides a reliable implementation of several commonly used TMOs. The images in the experiment dataset are tone mapped using the PFStmo software with the given TMOs using the default parameters.
-
-
-\subsection{Individual Feature Correlations}
-To investigate how individual image features correlate with the human responses collected through the experiment, the feature responses are treated as an observer that are given the same set image triplets used in the experiment. Assume that $t_i = R_i-A_i-B_i$ represents the $i^{th}$ triplet (i.e. trial) with $R_i$ being the reference image, $A_i$ the left test image, and $B_i$ the right test image. This triplet could have been evaluated one or more times by different human observers. Let $n(A_i)$ and $n(B_i)$ represent the number of times that each image was found more similar to $R_i$ than the other. From this information, a binary vector is created to encode the participants’ responses:
-\begin{equation}
-\label{eq:p_vector}
-P = (x_1, \ldots, x_N),
-\end{equation}
-
-where each element is defined as:
-\begin{equation}
-x_i = \begin{cases}
-1, &\text{if $n(A_i) > n(B_i)$}, \\
-0, &\text{otherwise}.
-\end{cases}
-\end{equation}
-
-For each feature type $f$, the feature representations of each image is computed as $f(R_i)$, $f(A_i)$, $f(B_i)$. Then their similarity to each other is calculated to obtain the following binary vector:
-\begin{equation}
-    F = (y_1,\cdots, y_N ),
-\end{equation}
-where
-\begin{equation}
-y_i = \begin{cases}
-1, &\text{ if $ d(f(R_i), f(A_i)) < d(f(R_i), f(B_i))$ } \\
-0, &\text{otherwise}.
-\end{cases}
-\end{equation}
-
-In this equation $d$ represents the distance metric that was chosen to be used for feature $f$. This encoding gave rise to two binary vectors, $P$ and $F$, with the former computed from user responses and the latter from feature similarities. There are many approaches to compute the correlation between two such vectors. In this thesis, the Sokal-Michener correlation is used, which is a simple, intuitive, and effective way to correlate two binary vectors~\cite{zhang2003properties}. This correlation is defined as
-
-\begin{equation}
-s = {{S_{11}(P, F) + S_{00}(P, F)} \over {N}},
-\end{equation}
-
-with $S_{11}$ and $S_{00}$ representing the total count of matching ones and zeros respectively:
-
-\begin{align}
-    S_{11}(P, F) &= P \cdot F,\\
-    S_{00}(P, F) &= \neg P \cdot \neg F, 
-\end{align}
-
-
-Note that the correlation coefficient s can take a value in range [0, 1]. In the following, this coefficient is multiplied by 100 to represent the correlations as percentages.
-
-The raw feature correlations with the first (Section \ref{sec:exp_phase_I}) and the second phase of the experiment (Section \ref{sec:exp_phase_II}) are reported in Tables \ref{tab:ind_correlation_p1} and \ref{tab:ind_correlation_p2}, respectively. In these tables, the leftmost column indicates the processing type applied to the images before the computation of features.
+In Figure \ref{fig:calibration_phase}, the user interface that allows the user to define a style for tone mapping during the calibration phase is shown. The tone mapping parameters can be easily adjusted with the sliders and the calibration image will be tone mapped and shown to the user in real time. The luminance histograms of log HDR and LDR images are also shown to aid the user and show the effect of the changes. After all of the calibration images are tone mapped, the style parameters are saved and the calibration phase is completed. Manually stylized calibration images following the four styles presented in Figure~\ref{fig:styles} are given in Appendix~\ref{app:calib}.
 
 \afterpage{
 \begin{landscape}
-\begin{table}
-\caption{Individual feature correlations with the first phase of the experiment. The numbers indicate the Sokal-Michener correlation scaled by 100 to represent percentages.}
-\centering
-\begin{tabular}{r | c c c c c c c}
-\label{tab:ind_correlation_p1}
-\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{Color} & \textbf{Luminance} & \textbf{Texture} & \textbf{GIST}\\
-\hline
-HDR-original & 56.79 & 58.09 & 55.10 & 53.14 & 52.39 & 56.82 \\
-HDR-linear & 63.54 & 63.31 & 55.69 & 54.07 & 54.36 & 58.18 \\
-Drago et al.~\cite{drago2003adaptive} & 65.88 & 65.74 & 56.73 & 57.45 & 51.17 & 58.23 \\
-Mai et al.~\cite{mai2010optimizing} & 65.28 & 65.13 & 56.01 & 56.77 & 51.90 & 57.57 \\ 
-Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 56.58 & 54.77 & 51.43 & 57.89 \\
-Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 56.59 & 54.68 & 51.39 & 57.92 \\
-Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 55.77 & 55.12 & 51.79 & 57.85 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 56.29 & 55.38 & 52.08 & 58.03 \\
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 57.15 & 55.89 & 54.85 & 58.33 \\
-Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 56.39 & 57.46 & 51.92 & 58.19 \\
-Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 55.98 & 56.99 & 51.84 & 57.86 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 55.18 & 56.51 & 51.99 & 58.33 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 53.04 & 54.61 & 53.06 & 57.84 
-\end{tabular}
-\end{table}
+\begin{figure}
+\begin{center}
+\includegraphics[height=0.85\textwidth]{figures/chapter5/ui_screenshot.png}
+\caption{User interface for calibration phase}
+\label{fig:calibration_phase}
+\end{center}
+\end{figure}
 \end{landscape}
 }
 
-\afterpage{
-\begin{landscape}
+\subsection{Operation}
+\label{sec:operation}
+In the operation phase, the user selects a style from the preset library that has been created in the calibration phase. Given a new HDR image to be tone mapped with the selected style, the tone mapping parameters \emph{t} (given in Table \ref{tab:tonemap_parameters}) must be determined based on calibration images tone mapping parameters \emph{$t_i$}. In this thesis, this problem is approached as an image similarity problem. If two images are similar according to a similarity metric, their tone mapping parameters should be also similar. After the distances between input image and the calibration images are obtained, the tone mapping parameters are calculated as inverse distance transform~\cite{Shepard1968}:
+
+\begin{equation}
+\label{eq:inv_distance_transform}
+    \mathbf{t} = {{\sum _{i=1} ^{N} {1 \over {d(\mathbf{f}, \mathbf{f_i})}} \mathbf{t_i}} \over {\sum _{i=1} ^{N} {1 \over {d(\mathbf{f}, \mathbf{f_i})}}}}
+\end{equation}
+
+Here, $\mathbf{f}$ is the feature vector of the current input image and $\mathbf{f_i}$ the feature vector for the calibration image $i$ and $\mathbf{t}$ its computed tone mapping parameters. Lastly, the function $d$ calculates the similarity between two feature vectors.
+
+In~\cite{akyuz2013style}, images are represented with HSV histograms~\cite{Ben2006} and histograms of gradients~\cite{dalal2005histograms} to capture colorimetric and structural properties of the images. HDR images varies highly on pixel values and it is hard to compare them directly. To overcome this, images are tone mapped to the interval $[0,1]$:
+
+\begin{equation}
+    L_{out} = {{L_{in}} \over {1 + L_{in}}}, 
+\end{equation}
+
+and color channels are transformed with:
+
+\begin{equation}
+    \mathbf{C_{out}} = {{\mathbf{C_{in}}}\over{L_{in}}} L_{out}.
+\end{equation}
+
+The feature vector is then computed using transformed values, as a $60$ dimensional vector, $3x15$ bins for HSV histogram and $15$ bins for gradient histogram. 
+
+Unfortunately, treating histograms as high dimensional points and computing their Euclidean distances does not yield correct results as this ignores the proximity information of the bins. For instance, although the histogram $H1 = (1, 0, 0, \cdots, 0)$ is closer to
+$H2 = (0, 1, 0, \cdots, 0)$ than $H3 = (0, 0, 1, \cdots, 0)$, their Euclidean distances are equal. To circumvent this problem, each histogram is convolved with a 1-D Gaussian $(\sigma = 0.7)$ prior to computing their distances ~\cite{Ben2006}. Circular similarity of the hue histogram is also accounted. Thus the final distance metric between two feature vectors \textbf{$f_i$} and \textbf{$f_j$} become:
+\begin{equation}
+\label{eq:distance_metric}
+    d(\mathbf{f_i, f_j}) = \mathbf{(f_i - f_j)}^T\mathbf{(f_i-f_j)},
+\end{equation}
+
+where \textbf{$f$} is the combined histogram. This metric is used to measure the similarity between input HDR image and calibration images. Also the same distance metric is used to cluster Fairchild dataset in order to pick calibration images.
+
+After tone mapping parameters are calculated with parameter interpolation, HDR image is tone mapped and presented to the user in a similar user interface like Figure~\ref{fig:calibration_images}. User can do the final adjustments and save the tone mapped LDR image. Figure~\ref{fig:gallery} shows a gallery of the obtained tone mapping results. Note that despite the large variation of the image content, the selected styles are successfully applied to each image.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/chapter5/style_based/gallery_small.jpg}
+\caption{All of these images are automatically tone mapped using the four styles that are generated.}
+\label{fig:gallery}
+\end{center}
+\end{figure}
+
+To sum up, tone mapping can be an artistic process that would result with different look and feel of the same scene instead of achieving a single "correct" look. The tone mapping methodology given in this chapter is versatile enough to create new styles with a small set of calibration images. And more importantly, with the leverage of image similarity, it is possible to apply the created styles to new HDR images automatically which can have quite different characteristics. However the similarity approach given in this chapter is rather straight forward and there is room for improvement. In the following section, two different similarity models backed up by a user study are suggested to improve style-based tone mapping.
+
+\section{Improvements to Style-based Tone Mapping}
+\label{sec:improvements}
+
+Although style based tone mapping has achieved some success for consistently tone mapping different images, the image similarity method given in Section~\ref{sec:operation} can be improved with the findings from the conducted user study. In this section, two modifications of this method that are made possible by the experimental findings of the user study is given. The first technique uses all of the image features utilized in Section~\ref{sec:operation} with different weights to estimate tone mapping parameters in the operation phase. Meanwhile, the second technique relates tone mapping parameters and image features for the estimation.
+
+\subsection{Parameter Interpolation with All Features}
+\label{sec:all_features}
+
+In the first modification, the model features given in Table \ref{tab:table_feature} are extracted from the selected HDR image and calibration images. Then, the distances between these features are calculated separately using the corresponding distance metrics given in the same table. After that, the weighted average of these feature distances are calculated. The weights used are the coefficients of the logistic regression model (Equation \ref{eq:log_regression}) obtained from the user experiment, with the idea that less important features should also contribute less to the distance. This operation can be summarized with the following equation:
+
+\begin{equation}
+    d_i = \sum_{j=1}^{6}c_j d_j(\mathbf{f_i}, \mathbf{f_{ij}})
+\end{equation}
+
+where $c_j$ is the coefficient of the $j^{th}$ feature, $\mathbf{f_j}$ is the $j^{th}$ feature of the input image, $\mathbf{f_{ij}}$ is the same for the $i^{th}$ calibration image, and finally $d_j$ is the distance metric for the $j^{th}$ feature. The result $d_i$ represents the combined distance between the input image and the corresponding calibration image. These combined distances are calculated between the selected HDR image and all calibration images. The tone mapping parameters for the selected HDR image are then interpolated using inverse distance transform as in Equation \ref{eq:inv_distance_transform}. This method differs from the initially presented approach in several aspects: 
+
+\begin{itemize}
+    \item Using a different and more representative set of features, luminance which is one of the most important features of HDR images has a separate feature vector,
+    \item More suitable distance metrics for feature types, for example, EMD takes into account bin proximity for calculating differences between histograms,
+    \item Instead of using a single fused feature vector, each feature distance calculated separately,
+    \item Employing a weighted average of feature vector distances with weights obtained from a user experiment, compared to using equal weight.
+\end{itemize}
+
+In Figure~\ref{fig:algo_updated}, the modified style-based tone mapping algorithm is shown. Note that while the calibration phase has not changed, the operation phase has been adjusted with the changes listed above compared to the initial version of the algorithm given in Figure~\ref{fig:calibration_operation}. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/algorithm_updated.png}
+    \caption{Modified style-based tone mapping algorithm with the findings of the user experiment. Compared to the initial method given in Figure~\ref{fig:calibration_operation}, more representative set of features are extracted and distances between these features are computed separately. Besides, instead of using equal weights on feature distances, the weights estimated from user study are employed.}
+    \label{fig:algo_updated}
+\end{figure}
+
+\subsection{Parameter Interpolation with Related Features}
+\label{sec:related_features}
+While the previous approach calculates a single distance value between the given image and calibration images and use this value to interpolate all tone mapping parameters, the second modification described in this section relates the model features with the tone mapping parameters and interpolates individual tone mapping parameters with different weights. In order to achieve this, the relationships defined in Table~\ref{tab:feature_mapping} are used.
+
 \begin{table}
-\caption{Individual feature correlations with the second phase of the experiment. The numbers indicate the Sokal-Michener correlation scaled by 100 to represent percentages.}
+\caption{Model features used for interpolation of tone mapping parameters.}
 \centering
-\begin{tabular}{r|c c c c c c c}
-\label{tab:ind_correlation_p2}
-\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{Color} & \textbf{Luminance} & \textbf{Texture} & \textbf{GIST}\\
+\begin{tabular}{l | l}
+\label{tab:feature_mapping}
+\textbf{Tone mapping parameter} & \textbf{Model feature}\\
 \hline
-HDR-original & 64.88 & 67.14 & 60.23 & 58.39 & 54.42 & 63.50 \\
-HDR-linear & 75.58 & 76.13 & 60.78 & 57.79 & 57.97 & 65.71 \\
-Drago et al.~\cite{drago2003adaptive} & 80.88 & 81.80 & 62.58 & 62.72 & 53.87 & 65.39 \\
-Mai et al.~\cite{mai2010optimizing} & 80.00 & 79.95 & 61.11 & 61.66 & 53.46 & 64.06 \\
-Reinhard et al. (local)~\cite{reinhard2002photographic} & 80.92 & 81.61 & 62.21 & 58.16 & 53.87 & 64.88 \\
-Reinhard et al. (global)~\cite{reinhard2002photographic} & 80.92 & 81.57 & 62.21 & 57.97 & 54.75 & 64.75 \\
-Durand \& Dorsey~\cite{durand2002fast} & 81.75 & 81.34 & 62.07 & 59.22 & 53.00 & 64.19 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41 & 80.65 & 61.15 & 59.59 & 52.49 & 64.47 \\ 
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37 & 80.41 & 64.15 & 61.43 & 60.55 & 65.44 \\
-Fattal et al.~\cite{durand2002fast} & 80.51 & 80.92 & 62.30 & 64.24 & 52.90 & 65.02 \\
-Mantiuk et al.~\cite{mantiuk2008display} & 80.00 & 80.78 & 62.12 & 61.71 & 54.56 & 64.19 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 81.38 & 82.21 & 58.39 & 61.61 & 55.02 & 65.25 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 78.66 & 78.11 & 57.33 & 58.66 & 55.71 & 64.52
+Brightness ($t_b$) & Luminance \\
+Contrast ($t_c$) & Luminance \\
+Black point ($t_{bp}$) & Luminance \\
+White point ($t_{wp}$) & Luminance \\
+Color saturation ($t_s$) & Color \\
+Small detail strength ($t_{\lambda_s}$) & Texture \\
+Medium detail strength ($t_{\lambda_m}$ ) & Texture \\
+Large detail strength ($t_{\lambda_l}$) & Texture
 \end{tabular}
 \end{table}
-\end{landscape}
-}
-
-“HDR-original” represents the unaltered HDR image whereas “HDR-linear” represents its linearly scaled version. The other processing types all include the application of a certain tone mapping operator. For all processing types, except the original, the images were gamma-corrected and scaled to [0, 255] range.
-
-%In both models, closely related deeply learned features VGG16 and VGG19 used as separate features instead of selecting the better performing one. The reason behind this, as the study~\cite{simonyan2014very} suggests, the results obtained from combination of VGG16 and VGG19 (by taking an average) performs better than both VGG16 and VGG19, indicates that VGG16 and VGG19 are complementary features. This claim is consistent with the results given Table \ref{tab:fuse_vgg_phaseI_II}, although the improvement is not high.
-
-%\afterpage{
-%\begin{landscape}
-%\begin{table}
-%\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase I (left half) and Phase II (right half) of the experiment.}
-%\label{tab:fuse_vgg_phaseI_II}
-%\begin{tabular}{r|c|c|c||c|c|c}
-%\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
-%\hline
-%HDR-original &  56.79 & 58.09 & 57.91 &  64.88  &  67.14  &  66.59\\
-%HDR-linear &  63.54 & 63.31 & 63.85 &  75.58   & 76.13 & 76.96 \\
-%Drago et al.~\cite{drago2003adaptive} &  65.88 & 65.74 & 66.31 &  80.88 &    81.8 &    82.35\\
-%Mai et al.~\cite{mai2010optimizing} &  65.28 & 65.13 & 66.06 &  80.00 &   79.95    & 81.20 \\
-%Reinhard et al. (local)~\cite{reinhard2002photographic} & 65.82 & 65.63 & 66.21 & 80.92 &    81.61 &    82.21 \\
-%Reinhard et al. (global)~\cite{reinhard2002photographic} & 65.75 & 65.52 & 66.29 & 80.92   & 81.57   &  82.30 \\
-%Durand \& Dorsey~\cite{durand2002fast} & 66.17 & 65.43 & 66.44 & 81.75   & 81.34  &  82.76 \\
-%Mantiuk et al.~\cite{mantiuk2006perceptual} & 65.42 & 65.33 & 65.97 & 80.41   & 80.65 &   81.24 \\
-%Reinhard \& Devlin~\cite{reinhard2005dynamic} & 65.28 & 65.20 & 65.81 & 80.37  &  80.41 & 81.24\\
-%Fattal et al.~\cite{durand2002fast} & 65.90 & 65.72 & 66.25 & 80.51 & 80.92 & 81.98\\
-%Mantiuk et al.~\cite{mantiuk2008display} & 65.71 & 65.74 & 66.01 &  80.00   & 80.78 & 80.51\\
-%Ferradans et al.~\cite{ferradans2011analysis} & 66.02 & 65.90 & 66.77 & 81.38 & 82.21 &  83.27\\
-%Pattanaik et al.~\cite{pattanaik2000time} & 64.46 & 64.38 & 64.76 & 78.66   & 78.11   & 79.77
-%\end{tabular}
-%\end{table}
-%\end{landscape}
-%}
 
 
-\subsection{Statistical Analysis}
-In Table~\ref{tab:p_individual}, the statistical significance of the difference between each individual feature correlations are given. Fisher's exact test~\cite{fisher1922interpretation} is used for the calculations, image features are calculated on images tone mapped with Ferradans et al.~\cite{ferradans2011analysis} TMO, and correlation is calculated against Phase II of the experiment. This analysis shows that, the difference for the correlations of VGG16 and VGG19 features are not that significant and also Color - Luminance - Texture performances are rather close. On the other hand, deep learning features are significantly better than the other features and similarly, GIST feature is significantly better than Color and Texture features.
-
-
-\begin{table}
-\caption{$p$ values for statistical significance between individual image features, calculated with Fisher's exact test.}
-\label{tab:p_individual}
-\centering
-\resizebox{\textwidth}{!}{\begin{tabular}{c | c c c c c c}
- &VGG16& VGG19& Color& Luminance& Texture & GIST \\
-\hline
-VGG16 & $1.0$ & $0.504$ & $3.832x10^{-62}$ &$1.123x10^{-47}$ &$4.828x10^{-79}$ &$1.963x10^{-33}$ \\
-VGG19 & $0.504$ & $1.0$ & $3.083x10^{-67}$ & $3.670x10^{-52}$ & $9.416x10^{-85}$ &$3.302x10^{-37}$ \\
-Color & $3.832x10^{-62}$ &$3.083x10^{-67}$ &$1.0$ &$0.033$ &$0.027$ &$3.720x10^{-06}$ \\
-Luminance & $1.123x10^{-47}$ &$3.670x10^{-52}$ &$0.033$ &$1.0$ &$1.222x10^{-05}$ &$0.014$ \\
-Texture & $4.828x10^{-79}$ &$9.416x10^{-85}$ &$0.027$ &$1.222x10^{-05}$ &$1.0$ &$6.947x10^{-12}$ \\
-GIST &$1.963x10^{-33}$ &$3.302x10^{-37}$ &$3.720x10^{-06}$ &$0.014$ &$6.947x10^{-12}$ &$1.0$  
-\end{tabular}}
-\end{table}
-
-Another variable in the experiment analysis is the selection of tone mapping operators. Results given in Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2} shows that for a given image feature tone mapping operators are performing comparably. Table~\ref{tab:p_tmos} shows the $p$ values calculated with Fisher's exact test~\cite{fisher1922interpretation} between the VGG19 feature's correlation with the Phase II of the user study on images tone mapped with different tone mapping operators. While for most of the tone mapping operators the performance difference is not significant. For this feature, the differences between the best performing Ferradans et. al.'s TMO~\cite{ferradans2011analysis} and the successors Drago et al.'s~\cite{drago2003adaptive} and Reinhard et al.~\cite{reinhard2002photographic} TMOs are not significant ($p > 0.6$). However, the difference to the worst performing TMO, Pattanaik et al.'s TMO is significant with $p=0.001$.
-
-\begin{table}[ht]
-\caption{$p$ values for statistical significance between correlations of VGG19 features extracted on images tone mapped with different tone mapping operators, calculated with Fisher's exact test. User responses are used from Phase II of the experiment.}
-\label{tab:p_tmos}
-\resizebox{\textwidth}{!}{\begin{tabular}{c|c c c c c }
-\centering
- & Dra.~\cite{drago2003adaptive} & Mai.~\cite{mai2010optimizing} & Rein.(local)~\cite{reinhard2002photographic} & Rein. (global)~\cite{reinhard2002photographic} & Dur.~\cite{durand2002fast} \\
-\hline
-Dra.~\cite{drago2003adaptive} & 1.0 &0.132 &0.906 &0.875 &0.725  \\ 
-Mai.~\cite{mai2010optimizing} & 0.132 &1.0 &0.178 &0.19 &0.265  \\ 
-Rein.(local)~\cite{reinhard2002photographic} & 0.906 &0.178 &1.0 &1.0 &0.845 \\ 
-Rein.(global)~\cite{reinhard2002photographic} & 0.875 &0.19 &1.0 &1.0 &0.876  \\ 
-Dur.~\cite{durand2002fast} & 0.725 &0.265 &0.845 &0.876 &1.0  \\ 
-Man.~\cite{mantiuk2006perceptual} & 0.351 &0.593 &0.438 &0.461 &0.588  \\ 
-Rein.~\cite{reinhard2005dynamic} & 0.261 &0.732 &0.333 &0.353 &0.463  \\ 
-Dur.~\cite{durand2002fast} & 0.483 &0.444 &0.586 &0.613 &0.756  \\ 
-Man.~\cite{mantiuk2008display} & 0.414 &0.516 &0.509 &0.534 &0.67  \\ 
-Fer.~\cite{ferradans2011analysis} & 0.752 &0.063 &0.636 &0.608 &0.479  \\ 
-Pat.~\cite{pattanaik2000time} & 0.003 &0.146 &0.005 &0.005 &0.009\\ 
-\end{tabular}}
-\\
-\\
-\\
-\resizebox{\textwidth}{!}{\begin{tabular}{c|c c c c c c}
-\centering
-  & Man.~\cite{mantiuk2006perceptual} & Rein.~\cite{reinhard2005dynamic} & Dur.~\cite{durand2002fast} & Man.~\cite{mantiuk2008display} & Fer.~\cite{ferradans2011analysis} & Pat.~\cite{pattanaik2000time}\\
-\hline
-Dra.~\cite{drago2003adaptive} &0.351 &0.261 &0.483 &0.414 &0.752 &0.003 \\ 
-Mai.~\cite{mai2010optimizing} &0.593 &0.732 &0.444 &0.516 &0.063 &0.146 \\ 
-Rein.(local)~\cite{reinhard2002photographic} &0.438 &0.333 &0.586 &0.509 &0.636 &0.005 \\ 
-Rein.(global)~\cite{reinhard2002photographic}  &0.461 &0.353 &0.613 &0.534 &0.608 &0.005 \\ 
-Dur.~\cite{durand2002fast}  &0.588 &0.463 &0.756 &0.67 &0.479 &0.009 \\ 
-Man.~\cite{mantiuk2006perceptual} &1.0 &0.878 &0.847 &0.939 &0.198 &0.043 \\ 
-Rein.~\cite{reinhard2005dynamic}  &0.878 &1.0 &0.701 &0.788 &0.139 &0.067 \\ 
-Dur.~\cite{durand2002fast}  &0.847 &0.701 &1.0 &0.939 &0.291 &0.024 \\ 
-Man.~\cite{mantiuk2008display} &0.939 &0.788 &0.939 &1.0 &0.241 &0.032 \\ 
-Fer.~\cite{ferradans2011analysis}  &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\ 
-Pat.~\cite{pattanaik2000time}  &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
-\end{tabular}}
-\end{table}
-
-
-%\begin{landscape}
-%\begin{table}[ht]
-%\resizebox{\textheight}{!}{\begin{tabular}{c|c c c c c c c c c c c}
-%\centering
-% & Drago et al.~\cite{drago2003adaptive} & Mai et al.~\cite{mai2010optimizing} & Reinhard et al. (local)~\cite{reinhard2002photographic} & Reinhard et al. (global)~\cite{reinhard2002photographic} & Durand \& Dorsey~\cite{durand2002fast} & Mantiuk et al.~\cite{mantiuk2006perceptual} & Reinhard \& Devlin~\cite{reinhard2005dynamic} & Fattal et al.~\cite{durand2002fast} & Mantiuk et al.~\cite{mantiuk2008display} & Ferradans et al.~\cite{ferradans2011analysis} & Pattanaik et al.~\cite{pattanaik2000time}\\
-%\hline
-%Drago et al.~\cite{drago2003adaptive} & 1.0 &0.132 &0.906 &0.875 &0.725 &0.351 &0.261 &0.483 &0.414 &0.752 &0.003 \\ 
-%Mai et al.~\cite{mai2010optimizing} & 0.132 &1.0 &0.178 &0.19 &0.265 &0.593 &0.732 &0.444 &0.516 &0.063 &0.146 \\ 
-%Reinhard et al. (local)~\cite{reinhard2002photographic} & 0.906 &0.178 &1.0 &1.0 &0.845 &0.438 &0.333 &0.586 &0.509 &0.636 &0.005 \\ 
-%Reinhard et al. (global)~\cite{reinhard2002photographic} & 0.875 &0.19 &1.0 &1.0 &0.876 &0.461 &0.353 &0.613 &0.534 &0.608 &0.005 \\ 
-%Durand \& Dorsey~\cite{durand2002fast} & 0.725 &0.265 &0.845 &0.876 &1.0 &0.588 &0.463 &0.756 &0.67 &0.479 &0.009 \\ 
-%Mantiuk et al.~\cite{mantiuk2006perceptual} & 0.351 &0.593 &0.438 &0.461 &0.588 &1.0 &0.878 &0.847 &0.939 &0.198 &0.043 \\ 
-%Devlin~\cite{reinhard2005dynamic} & 0.261 &0.732 &0.333 &0.353 &0.463 &0.878 &1.0 &0.701 &0.788 &0.139 &0.067 \\ 
-%Fattal et al.~\cite{durand2002fast} & 0.483 &0.444 &0.586 &0.613 &0.756 &0.847 &0.701 &1.0 &0.939 &0.291 &0.024 \\ 
-%Mantiuk et al.~\cite{mantiuk2008display} & 0.414 &0.516 &0.509 &0.534 &0.67 &0.939 &0.788 &0.939 &1.0 &0.241 &0.032 \\ 
-%Ferradans et al.~\cite{ferradans2011analysis} & 0.752 &0.063 &0.636 &0.608 &0.479 &0.198 &0.139 &0.291 &0.241 &1.0 &0.001 \\ %Pattanaik et al.~\cite{pattanaik2000time} & 0.003 &0.146 &0.005 &0.005 &0.009 &0.043 &0.067 &0.024 &0.032 &0.001 &1.0 \\ 
-%\end{tabular}}
-%\caption{caption[!]}
-%\end{table}
-%\end{landscape}
-
-
-\subsection{Combined Feature Correlation}
-
-Given the individual correlations reported in the previous tables Table~\ref{tab:ind_correlation_p1} and Table~\ref{tab:ind_correlation_p2}, a natural question that follows is if the features can be combined to develop a single objective metric that better correlates with human’s assessment of similarity for HDR images. To this end, two types of logistic regression analysis are performed yielding two related but different models.
-
-%\begin{table}
-%\caption{Comparison of correlation results for the features VGG16, VGG19 and combination VGG16-19 for the Phase II of the experiment}
-%\label{tab:fuse_vgg_phaseII}
-%\begin{tabular}{c|c|c|c}
-%\textbf{Processing Type} & \textbf{VGG16} & \textbf{VGG19} & \textbf{VGG16-19} \\
-%\hline
-%HDR-original &  64.88  &  67.14  &  66.59 \\
-%HDR-linear &  75.58   & 76.13 & 76.96 \\
-%Drago et al. ~\cite{drago2003adaptive} &  80.88 &    81.8 &    82.35 \\
-%Mai et al. ~\cite{mai2010optimizing} &  80 &   79.95    & 81.2 \\
-%Reinhard et al. (local) ~\cite{reinhard2002photographic} & 80.92 &    81.61 &    82.21 \\
-%Reinhard et al. (global) ~\cite{reinhard2002photographic} & 80.92   & 81.57   &  82.3 \\
-%Durand \& Dorsey~\cite{durand2002fast} & 81.75   & 81.34  &  82.76 \\
-%Mantiuk et al.~\cite{mantiuk2006perceptual} & 80.41   & 80.65 &   81.24 \\
-%Reinhard \& Devlin~\cite{reinhard2005dynamic} & 80.37  &  80.41 &    81.24 \\
-%Fattal et al.~\cite{durand2002fast} & 80.51   & 80.92 &    81.98 \\
-%Mantiuk et al.~\cite{mantiuk2008display} &  80   & 80.78   & 80.51 \\
-%Ferradans et al.~\cite{ferradans2011analysis} & 81.38 &    82.21 &    83.27 \\
-%Pattanaik et al.~\cite{pattanaik2000time} & 78.66   & 78.11   & 79.77
-%\end{tabular}
-%\end{table}
-
-
-
-\subsubsection{Triplet Model}
-In the first analysis, the aim is to develop a model that predicts which of the two test images is more similar to the reference image using the pairwise distances between the test and reference images. Assuming that j is a feature index, one can compute these pairwise differences as follows:
-\begin{align}
-    a_j &= d_j(f_j(R), f_j(A)), \\
-   b_j &= d_j(f_j(R), f_j(B)). 
-\end{align}
-
-Here $d_j$ represents the distance metric chosen for the $j^{th}$ feature. The model takes as input these differences for all features (i.e. $j \in {1, 2, 3, 4, 5, 6}$) and computes their weighted average as its response:
+As an example, the brightness parameter $t_b$ is computed by interpolating the $t_{b_i}$ parameters of the calibration images by using the similarity between the luminance features:
 
 \begin{equation}
-    r = c_0 + c_1(a_1 - b_1) + c_2(a_2 - b_2) + c_3(a_3 - b_3)+ c_4(a_4 - b_4) + c_5(a_5 - b_5) + c_6(a_6 - b_6)
-\end{equation}
- 
-
-To compute the unknown coefficients logistic regression is used as the dependent data (i.e. user responses)
-is binary: given one reference and two test images, the user selects either the left image or the right one,
-encoded as 1 and 0.
-
-The regression is performed between the two vectors, namely the $P$ vector from Equation \ref{eq:p_vector}, and the model response $R$ comprised of the following elements:
-\begin{equation}
-    R = (r_1,\cdots, r_N ),
-\end{equation}
-where
-\begin{equation}
-    r_i = [a_{i1} - b_{i1} \cdots a_{i6} - b_{i6}].
+   t_b = { {\sum_{i=1}^N { {1} \over {d_{lum} (lum, lum_i)} } t_{b_i} } \over {\sum_{i=1}^N} { {1} \over {d_{lum} (lum, lum_i)} } }
 \end{equation}
 
-The logistic regression models the logarithm of the odds as the response of the model:
-\begin{equation}
-   ln \left( {{Pr(x = 1)} \over { 1 - Pr(x = 1)}} \right) = r. 
-\end{equation}
-
-
-From this equation, it can be derived that the probability of a user responding 1 (i.e. selecting the left image) is equal to
+Other tone mapping parameters that are related to the model features are interpolated analogously. Because GIST and deep learning features are not directly linked to a specific appearance phenomenon but are measures of overall similarity between the given images, they are not directly linked to specific tone mapping parameters. Instead these features are experimented with merging them using the individually interpolated parameters as follows: 
 
 \begin{equation}
-\label{eq:response_prob}
-    Pr(x = 1) = {{1} \over {1 + e^{-r}}}
+   \mathbf{t} = w_0\mathbf{t_0} + w_1\mathbf{t_1} + w_2\mathbf{t_2}, 
 \end{equation}
 
-If $Pr(x = 1) > 0.5$, it is assumed that the model has selected the left image. Otherwise, the model’s response was taken as the right image.
+where $\mathbf{t_0}$ represents individually interpolated TMO parameters (given in Table~\ref{tab:feature_mapping}), $\mathbf{t_1}$ TMO parameters interpolated as a whole using GIST similarity only, and $\mathbf{t_2}$ TMO parameters interpolated as a whole using solely deep learning feature similarity. The weights control the influence of TMO parameters that are computed by using these different approaches.
 
-To measure the effectiveness of this model 10-fold cross validation is used. In each fold, 90\% of the trials were selected for training and the remaining 10\% for testing. This process was repeated 10 times while ensuring that each test fold is mutually exclusive from each other. Similar to the analysis of individual features, the success of this model is assessed against both the Phase I and the Phase II of the experiment. The results are shown in Table \ref{tab:correlation_triplet_model}. It can be seen that the feature combination, on average, improves the success of each presentation type by about 3\% to 4\%. The best three results are obtained by Ferradans et al.’s~\cite{ferradans2011analysis}, Drago et al.’s~\cite{drago2003adaptive}, and Reinhard et al.’s ~\cite{reinhard2002photographic} TMO algorithms. The reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+\subsection{Results}
+In Figure~\ref{FigStyle}, several results are compared that obtained by using the initial style based tone mapping method as well as with the two modifications proposed in the previous sections, Section~\ref{sec:related_features} and Section~\ref{sec:all_features}. 
 
-\afterpage{
-\begin{landscape}
-\begin{table}
-\caption{The correlations of the first regression model with the user responses. Phase I and Phase II represent the initial and extended experiments respectively. The coefficients are reported for the Phase II of the experiment only due to its higher correlation with the user data.}
-\centering
-\begin{tabular}{r|c c || r r r r r r r}
-\label{tab:correlation_triplet_model}
-\textbf{Processing Type} & \textbf{Phase I} & \textbf{Phase II} & \textbf{c0} & \textbf{c1} & \textbf{c2} & \textbf{c3} & 
-\textbf{c4} & \textbf{c5} & \textbf{c6}\\
-\hline
-HDR-original & 60.67 & 70.76 & 0.0573 & 0.0768 & -3.3241 & -0.0028 & -0.0124 & -0.2921 & -10.7505 \\
-HDR-linear & 64.81 & 78.83 & 0.0005 & -5.4801 & -5.9902 & -0.0074 & -0.0635 & -0.3289 & -10.1782 \\
-Drago et al. ~\cite{drago2003adaptive} & 67.36 & 83.49 & -0.0423 & -7.8751 & -7.6339 & -0.0506 & -0.0958 & 0.0043 & -7.3615 \\
-Mai et al. ~\cite{mai2010optimizing} & 66.70 & 81.78 & 0.0085 & -5.2932 & -7.9526 & -0.0601 & -0.1078 & -0.0358 & -4.9275 \\
-Reinhard et al. (local) ~\cite{reinhard2002photographic} & 67.19 & 83.21 & -0.0154 & -7.3838 & -8.7207 & -0.0688 & -0.0853 & 0.0145 & -7.8380 \\
-Reinhard et al. (global) ~\cite{reinhard2002photographic} & 67.34 & 83.16 & -0.0230 & -7.0932 & -8.8856 & -0.0687 & -0.0783 & 0.0101 & -7.4470 \\
-Durand \& Dorsey~\cite{durand2002fast} & 66.92 & 83.03 & -0.0604 & -8.1694 & -7.3044 & -0.0977 & -0.0147 & 0.0082 & -6.8549 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 66.64 & 81.74 & 0.0220 & -6.1999 & -8.0462 & -0.1081 & -0.0286 & -0.0102 & -10.0494 \\
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 66.72 & 82.75 & -0.0332 & -5.6555 & -8.8871 & -0.1284 & -0.0144 & -0.0254 & -7.9970 \\
-Fattal et al.~\cite{durand2002fast} & 67.25 & 82.56 & -0.0025 & -6.2320 & -8.3176 & -0.1120 & -0.0272 & -0.0143 & -7.9175 \\
-Mantiuk et al.~\cite{mantiuk2008display} & 66.91 & 82.15 & -0.0005 & -5.7555 & -8.4433 & -0.0777 & -0.0548 & -0.0041 & -6.8189 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 67.21 & 83.53 & 0.0226 & -5.7782 & -9.8899 & -0.0801 & -0.0432 & -0.0060 & -7.4090 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 65.02 & 79.89 & -0.0365 & -7.5194 & -5.6052 & 0.0132 & -0.0565 & 0.0211 & -6.1389 \\
-\end{tabular}
-\end{table}
-\end{landscape}
-}
+In the first row of the figure, the tone mapping results of the ``Paul Bunyan'' scene from the HDR Photographic Survey~\cite{fairchild2007hdr} is shown. This scene depicts a bright outdoors environment with colorful foreground objects. It may be noted that all results are similar but the individual parameter interpolation with equally weighted GIST and deep learning features (d) has slightly higher contrast (please refer to Appendix~\ref{app:results} with high resolution images for better comparison). The overall \emph{candy} style is preserved in all images. 
 
-
-%paper
-\subsubsection{Duplet Model}
-Despite the first regression model yielding high correlations exceeding 80\% for most algorithms, it has an important drawback. It requires a triplet of images, one reference and two test, as input to the model. While this matches the presentation type in our experiment, a more desirable model should be able to take only two images (e.g., a query image and a test image) and produce a relative similarity score between them. This may allow, for instance, ranking the similarity of multiple images with a query image as in image-based search applications.
-
-In order to allow for this possibility, our second regression model was designed in the following manner.
-For each trial, $ti = R_i - A_i - B_i, i \in {1, \cdots , N}$, two elements are inserted to our user response vector:
-\begin{align}
-    x_{2i-1} &= \begin{cases} 
-    1, &\text{ if $n(A_i) > n(Bi)$ } \\
-    0, &\text{otherwise},
-    \end{cases}\\
-    x_{2i} &= \neg  x_{2i-1},
-\end{align}
-    
-
-yielding a vector of size $2N$:
-\begin{equation}
-   P = (x_1, x_2,\cdots, x_{2N} ). 
-\end{equation}
-
-As for the model’s inputs each element of the feature vector was computed as
-\begin{align}
-    y_{2i-1} &= [a_1 \cdots a_6], \\
-    y_{2i} &= [b_1 \cdots b_6], 
-\end{align}
-
-
-yielding
-\begin{equation}
-    F = (y_1, y_2, \cdots , y_{2N} ).
-\end{equation}
-
-In summary, the elements of the feature vector always followed the A, B order, whereas the corresponding elements in the user vector were 1 for the selected image and 0 for the other image. This second regression model learns to produce the following response given the feature differences between a reference and test image:
-
-\begin{equation}
-\label{eq:log_regression}
-    r_a = c_0 + c_1a_1 + c_2a_2 + c_3a_3 + c_4a_4 + c_5a_5 + c_6a_6 
-\end{equation}
-
-By converting this response to probability values as in Equation \ref{eq:response_prob}, one can compute a relative degree of similarity between the two images. To validate this model, the model response is computed twice by using $R_i - A_i$ and $R_i - B_i$ image pairs:
-\begin{align}
-    Pr(x = left) &= {{1} \over {1 + e^{-r_a}}} \\
-    Pr(x = right) &= {{1} \over {1 + e^{-r_b}}}
-\end{align}
-
-
-Given a triplet, if $Pr(x = left) > Pr(x =right)$ it is assumed the model to have selected the left image. Otherwise, it was assumed that the model selects the right one. The correlation of this model with the user responses was calculated as in the previous model yielding the results in Table \ref{tab:correlation_duplet_model}. The best result of the second model was found for Drago et al.’s~\cite{drago2003adaptive} TMO in the second phase of the experiment. The model achieved a correlation of 83.81\% with the user responses. Similarly to the Triplet Model, the reported coefficients are computed by using the entire dataset from the Phase II of the experiment due to its higher correlation with the combined features.
+In the second row of the figure, ``Peppermill'' night scene from the same dataset is shown. This is a night scene of a street with some bright lights and banners. For this scene the difference of the second modification, parameter interpolation with related features, is more clear as images in (c) and (d) exhibit a darker rendering, which is more suitable for a night scene. The reason for this darkening effect is that the brightness parameter, $t_b$, for tone mapping becomes more similar to the $t_b$ parameter of the night image in the calibration images due to the similarity of the \emph{luminance} features between these images. The addition of GIST and deep learning features with equal weight in (d) yields a slightly brighter image compared to (c). Similar to the results of the previous image overall \emph{candy} style is preserved also in this image. Appendix~\ref{app:results} has higher resolution versions of the results for more clear observation of the differences.
 
 
 \afterpage{
 \begin{landscape}
-\begin{table}
-\caption{The correlations of the second regression model with the user responses. Phase I and Phase II represent the initial and extended experiments respectively. The coefficients are reported for the Phase II of the experiment only due to its higher correlation with the user data.}
-\centering
-\begin{tabular}{r|c c || r r r r r r r}
-\label{tab:correlation_duplet_model}
-\textbf{Processing Type} & \textbf{Phase I} & \textbf{Phase II} & \textbf{c0} & \textbf{c1} & \textbf{c2} & \textbf{c3} & 
-\textbf{c4} & \textbf{c5} & \textbf{c6}\\
-\hline
-HDR-original & 60.75 & 70.80 & 2.9323 & -0.1531 & -2.8191 & -0.0024 & -0.0063 & -0.2494 & -7.1569 \\
-HDR-linear & 64.65 & 78.50 & 5.5623 & -3.9224 & -3.7111 & -0.0149 & -0.0048 & -0.2164 & -5.5490 \\
-Drago et al. ~\cite{drago2003adaptive} & 67.52 & 83.81 & 8.3967 & -5.5248 & -4.0845 & -0.0280 & -0.0587 & -0.0054 & -3.3575 \\
-Mai et al. ~\cite{mai2010optimizing} & 66.72 & 81.73 & 7.4594 & -4.0822 & -5.0859 & -0.0196 & -0.0532 & -0.0326 & -0.9064 \\
-Reinhard et al. (local) ~\cite{reinhard2002photographic} & 67.35 & 83.53 & 8.2123 & -5.6104 & -4.3743 & -0.0249 & -0.0290 & 0.0063 & -3.6705 \\
-Reinhard et al. (global) ~\cite{reinhard2002photographic} & 67.20 & 83.16 & 8.2162 & -5.3915 & -4.5828 & -0.0259 & -0.0264 & 0.0049 & -3.6673 \\
-Durand \& Dorsey~\cite{durand2002fast} & 66.81 & 82.61 & 8.2396 & -5.9298 & -4.0539 & -0.0560 & -0.0081 & 0.0077 & -3.1001 \\
-Mantiuk et al.~\cite{mantiuk2006perceptual} & 66.50 & 82.10 & 7.6833 & -4.3626 & -4.8232 & -0.0658 & -0.0212 & -0.0082 & -3.4889 \\
-Reinhard \& Devlin~\cite{reinhard2005dynamic} & 66.56 & 82.61 & 8.5676 & -4.6656 & -4.9324 & -0.0936 & -0.0075 & -0.0262 & -2.8843 \\
-Fattal et al.~\cite{durand2002fast} & 67.07 & 82.79 & 8.0671 & -4.4119 & -4.8215 & -0.0716 & -0.0191 & -0.0141 & -2.8938 \\
-Mantiuk et al.~\cite{mantiuk2008display} & 66.57 & 82.01 & 7.7805 & -3.9872 & -5.3899 & -0.0228 & -0.0319 & -0.0084 & -2.6625 \\
-Ferradans et al.~\cite{ferradans2011analysis} & 67.33 & 83.16 & 8.5911 & -5.0432 & -4.9965 & -0.0541 & -0.0258 & -0.0089 & -2.3825 \\
-Pattanaik et al.~\cite{pattanaik2000time} & 64.94 & 79.84 & 6.6735 & -5.6657 & -3.4601 & 0.0109 & -0.0295 & 0.0241 & -1.8922
-\end{tabular}
-\end{table}
-\end{landscape}
-}
-
-In this chapter, a crowdsourcing user study with the aim of HDR image similarity assessment is presented. The experiment data is collected in two phases with in total more than 1200 participants. While in the first phase, single response per image triplet is sought, the second phase extends the first phase by collecting three responses per image triplet. These responses analyzed separately for feature correlation and found out for the image triplets that have three consistent responses, the correlation scores are higher for both individual and combined features. Besides that, the effect of image format is also investigated and it is observed that tone mapped versions have higher correlations for hand crafted features and deeply learned features than raw HDR data and linearly scaled image. On the other hand, tone mapping operators perform comparably. Lastly, two models learnt from user data are proposed for the combined feature perform similarly with each other and better than the individual features. Among these models, duplet model is more suitable for applications in the sense that it does not require image triplets but estimates image similarity between image pairs. In the next chapter, it is shown how this model can be used to improve the style-based tone mapping application.
+\begin{figure}
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v1_small.jpg}
+    \caption{Initial}
+    \label{FigStyle:original_paul_bunyan}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_v2_small.jpg}
+    \caption{Version I}
+    \label{FigStyle:VerI_paul_bunyan}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_1_small.jpg}
+    \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
+    \label{FigStyle:VerIIa_paul_bunyan}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+   \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/PaulBunyan_hdrcandy_w0_w1_w2_small.jpg}
+    \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
+    \label{FigStyle:VerIIb_paul_bunyan}
+\end{subfigure}\\
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v1_small.jpg}
+    \caption{Initial}
+    \label{FigStyle:original_peppermill}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_v2_small.jpg}
+    \caption{Version I}
+    \label{FigStyle:VerI_peppermill}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_1.png}
+    \caption{$w_0 = 1$, $w_1 = w_2 = 0$}
+   \label{FigStyle:VerIIa_peppermill}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.40\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chapter5/style_based/Peppermill_hdrcandy_w0_w1_w2_small.jpg}
+    \caption{$w_0 = w_1 = w_2 = \frac{1}{3}$}
+    \label{FigStyle:VerIIb_peppermill}
+\end{subfigure}\hfill
+\caption{Application of the user study findings for the style-based tone mapping
+    problem.  Initial results are shown in the first column, followed
+        by Version I in the second column and two variants of Version II
+in the last two columns.}
+\label{FigStyle}
+\end{figure}
+\end{landscape}}
