@@ -30,9 +30,54 @@ Another algorithm that allows a wide range of possibilities during tone mapping 
 
 There are several LDR retouching studies that are similar to the proposed style based tone mapping operator in the sense of enhancing images by using a set of training images ~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, these studies do not focus on HDR image tone mapping.
 
-%There are several LDR retouching studies that allow enhancing a new image using a set of previous training examples~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, their focus is not HDR image tone mapping.
-
 Recently, deep neural networks are also used for learning image adjustment parameters. Some of these studies uses a training set of high quality images and learns the enhancement parameters in an unsupervised manner~\cite{park2018distort, chen2018deep,ignatov2018wespe}. These methods aim to enhance the general quality of the given image instead of applying a specific style. Yan et al.~\cite{yan2016automatic} on the other hand, proposes to learn a computational model of a style from image pairs, an untouched image and a stylized version. Their method incorporates high level semantic information of the pixels as well as local and global features of the image. Another study with a similar goal, Hu et al.~\cite{hu2018exposure} uses unpaired data, a set of stylized images, for learning an operation sequence that will style an input image when applied. The benefit of learning modification steps is it makes the style explainable, which most of the deep learning based image enhancements methods lack. While these methods aim to learn predefined style, Lee et al.~\cite{lee2016automatic} uses deep learning based semantic search to find similar images from a large collection and applies the styles of these images to the given image, by using a transfer function for color and luminance statistics, which brings the benefit of automatically selecting candidate styles. Similar to the previous LDR retouching studies, these methods also do not aim to tone map HDR images.
+
+Besides of these studies that learns image adjustment parameters using deep neural networks, initiated with the study of Gatsy et. al~\cite{gatys2016image}, deep neural networks are also used for style transfer between images. The algorithm introduced in~\cite{gatys2016image} separates and recombines the content and style of images using different layers of pretrained VGG19 network. After Gatsy et. al~\cite{gatys2016image}, neural style transfer gained popularity and many studies focused on improving this method. Gatsy et. al~\cite{gatys2017controlling} introduced control methods such as color, scale and spatial control, Gupta et. al~\cite{gupta2017characterizing} improves stability, Liu and Lai~\cite{liu2017depth} added depth awareness, Huang and Belongie~\cite{huang2017arbitrary} made the neural style transfer more practical with a faster method and flexible user controls.
+
+In Figure~\ref{fig:neural_style_transfer}, the neural style transfer method~\cite{gatys2016image} is applied to the tone mapped HDR images. All images are taken from Fairchild's HDR dataset~\cite{fairchild2007hdr}. Content images are tone mapped with Reinhard et. al~\cite{reinhard2002photographic}, and style images are tone mapped manually with the method that is described in Section~\ref{sec:calibration} according to the \emph{candy} style shown in Figure~\ref{fig:styles}. For neural style transfer method, \emph{conv5\_2} is used as content layer, while \emph{conv1\_1} is used as style layer, content weight $\alpha = 0.1$ and style weight $\beta = 10^4$. Style transfer results are given in Figure~\ref{fig:neuro_style_result_1} and Figure~\ref{fig:neuro_style_result_2}. As shown in the resulting images and stated in the original study~\cite{gatys2016image}, it is not possible to completely separate the content and style of the images, and this method performs pleasing when artistic images like paintings are used as style images and not so well when photographs are given as style images. It is possible to see this effect in the resulting images, the straight edges and some objects are deformed, it is not possible to read the writings in the images, and the images looks more like a painting although given style images do not have this property.
+
+\afterpage{
+\begin{landscape}
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PeckLake.hdr_candy.png}
+    \caption{Style image}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PaulBunyan_reinhard02.png}
+    \caption{Content image}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PaulBunyan_0.1_10000.0_candy.png}
+    \caption{Style Transfer Result}
+    \label{fig:neuro_style_result_1}
+\end{subfigure}\hfill \\ 
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Frontier.hdr_candy.png}
+    \caption{Style image}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Peppermill_reinhard02.png}
+    \caption{Content image}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.53\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Peppermill_0.1_10000.0_candy.png}
+    \caption{Style Transfer Result}
+    \label{fig:neuro_style_result_2}
+\end{subfigure}\hfill
+\caption{Style transfer results of Gatsy et. al~\cite{gatys2016image}, using content layer \emph{conv5\_2}, style layer \emph{conv1\_1}, $\alpha = 0.1$ and $\beta = 10^4$.}
+\label{fig:neural_style_transfer}
+\end{figure}
+\end{landscape}}
+
+This drawback of neural style transfer is addressed by Luan et. al~\cite{luan2017deep} by preventing spatial distortions and allowing transformations only in color space. Also by including semantic segmentation, the style transfer between unrelated contents are prevented. While this method produces very pleasing results for style transfer between images depicting similar scenes but different color palette or time of the day, it is not fully free of distortions such as creating patterns on uniformly colored objects or changing the illumination on an object in an unnatural way. Also the success of the method depends on the underlying segmentation method.  
 
 In summary, style based tone mapping differs from the previous methods by means of learning different tone mapping styles from a small set of tone mapped calibration images. Then, new HDR images, which may be created from vastly different scenes, can be tone mapped according to these learnt styles. In this sense, style based tone mapping is the first method that allows to batch process a set of HDR images consistently according to the created style.
 
@@ -48,6 +93,7 @@ Style based tone mapping ~\cite{akyuz2013style} consists of two consecutive phas
 \end{figure}
 
 \subsection{Calibration}
+\label{sec:calibration}
 In the calibration phase, first the user is asked to pick a name for the new style to be created, and then the user is asked to tone map a fixed set of calibration images. Assigning a name to the style would be helpful for the user to stay consistent with the style while tone mapping the calibration images. In addition, once the style is created and saved, this will allow the user to have many predefined styles in preset library and reuse them. 
 
 Calibration images should be representative enough for different environments that has different characteristics and at the same time distinctive from each other as much as possible to keep the number of the calibration images low. The number of calibration images directly affects the time spent in the calibration phase, so although more calibration images would represent different environments better, in order not to overwhelm the user, the number of calibration images is chosen in a way that the user can finish the calibration phase in a reasonable time.
