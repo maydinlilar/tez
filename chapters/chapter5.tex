@@ -28,7 +28,7 @@ Most TMOs fail to provide sufficient freedom to artists to express their creativ
 
 Another algorithm that allows a wide range of possibilities during tone mapping is the generic TMO~\cite{Mantiuk08a}. This operator hinges on the idea that although a large number of TMOs exist, the majority of them can be modeled using a generic tone curve followed by local modifications. The authors have demonstrated that by using a small set of parameters, a skilled artist can match the output of any TMO with the generic TMO. Although these algorithms offer expressive freedom to the artist, they have no notion of \emph{learning} the artist's preference. In fact, it has been shown by the authors that the same set of parameters can give rise to vastly different outputs for different images~\cite{Mantiuk08a}. As such, using these operators to automatically tone map a large number of images is impractical. 
 
-There are several LDR retouching studies that are similar to the proposed style based tone mapping operator in the sense of enhancing images by using a set of training images ~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}. However, these studies do not focus on HDR image tone mapping.
+There are several LDR retouching studies that are similar to the proposed style based tone mapping operator in the sense of enhancing images by using a set of training images ~\cite{kang2010personalization, bychkovsky2011learning} or by automatic exposure correction~\cite{yuan2012automatic} or artistic enhancement~\cite{son2014art}.  However, these studies do not focus on HDR image tone mapping.
 
 Recently, deep neural networks are also used for learning image adjustment parameters. Some of these studies uses a training set of high quality images and learns the enhancement parameters in an unsupervised manner~\cite{park2018distort, chen2018deep,ignatov2018wespe}. These methods aim to enhance the general quality of the given image instead of applying a specific style. Yan et al.~\cite{yan2016automatic} on the other hand, proposes to learn a computational model of a style from image pairs, an untouched image and a stylized version. Their method incorporates high level semantic information of the pixels as well as local and global features of the image. Another study with a similar goal, Hu et al.~\cite{hu2018exposure} uses unpaired data, a set of stylized images, for learning an operation sequence that will style an input image when applied. The benefit of learning modification steps is it makes the style explainable, which most of the deep learning based image enhancements methods lack. While these methods aim to learn predefined style, Lee et al.~\cite{lee2016automatic} uses deep learning based semantic search to find similar images from a large collection and applies the styles of these images to the given image, by using a transfer function for color and luminance statistics, which brings the benefit of automatically selecting candidate styles. Similar to the previous LDR retouching studies, these methods also do not aim to tone map HDR images.
 
@@ -40,44 +40,56 @@ In Figure~\ref{fig:neural_style_transfer}, the neural style transfer method~\cit
 \begin{landscape}
 \begin{figure}
 \centering
-\begin{subfigure}[b]{0.53\textwidth}
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PeckLake.hdr_candy.png}
     \caption{Style image}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.53\textwidth}
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PaulBunyan_reinhard02.png}
     \caption{Content image}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.53\textwidth}
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/neuro_style_transfer/PaulBunyan_0.1_10000.0_candy.png}
-    \caption{Style Transfer Result}
+    \caption{Gatsy et. al~\cite{gatys2016image}}
     \label{fig:neuro_style_result_1}
-\end{subfigure}\hfill \\ 
-\begin{subfigure}[b]{0.53\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Frontier.hdr_candy.png}
+    \includegraphics[width=\textwidth]{figures/reinhard_color_transfer/PaulBunyan_PeckLake_candy.png}
+    \caption{Reinhard et. al~\cite{reinhard2001color}}
+    \label{fig:reinhard_color_result_1}
+\end{subfigure}\hfill\\ 
+\begin{subfigure}[b]{0.41\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Frontier.hdr_candy_scaled.png}
     \caption{Style image}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.53\textwidth}
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Peppermill_reinhard02.png}
     \caption{Content image}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.53\textwidth}
+\begin{subfigure}[b]{0.41\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/neuro_style_transfer/Peppermill_0.1_10000.0_candy.png}
-    \caption{Style Transfer Result}
+    \caption{Gatsy et. al~\cite{gatys2016image}}
     \label{fig:neuro_style_result_2}
 \end{subfigure}\hfill
-\caption{Style transfer results of Gatsy et. al~\cite{gatys2016image}, using content layer \emph{conv5\_2}, style layer \emph{conv1\_1}, $\alpha = 0.1$ and $\beta = 10^4$.}
+\begin{subfigure}[b]{0.41\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/reinhard_color_transfer/Peppermill_Frontier_candy.png}
+    \caption{Reinhard et. al~\cite{reinhard2001color}}
+    \label{fig:reinhard_color_result_2}
+\end{subfigure}\hfill
+\caption{Style transfer results of Gatsy et. al~\cite{gatys2016image} and color transfer results of Reinhard et. al~\cite{reinhard2001color}.}
 \label{fig:neural_style_transfer}
 \end{figure}
 \end{landscape}}
 
-This drawback of neural style transfer is addressed by Luan et. al~\cite{luan2017deep} by preventing spatial distortions and allowing transformations only in color space. Also by including semantic segmentation, the style transfer between unrelated contents are prevented. While this method produces very pleasing results for style transfer between images depicting similar scenes but different color palette or time of the day, it is not fully free of distortions such as creating patterns on uniformly colored objects or changing the illumination on an object in an unnatural way. Also the success of the method depends on the underlying segmentation method.  
+This drawback of neural style transfer is addressed by Luan et. al~\cite{luan2017deep} by preventing spatial distortions and allowing transformations only in color space. Also by including semantic segmentation, the style transfer between unrelated contents are prevented. While this method produces very pleasing results for style transfer between images depicting similar scenes but different color palette or time of the day, it is not fully free of distortions such as creating patterns on uniformly colored objects or changing the illumination on an object in an unnatural way. Also the success of the method depends on the underlying segmentation method. On the other hand, color transfer method of Reinhard et. al~\cite{reinhard2001color} is a global method that uses simple image statistics to transfer color from one image to another. In Figure~\ref{fig:reinhard_color_result_1} and Figure~\ref{fig:reinhard_color_result_2}, the result of this method on tone mapped HDR images are given. In both results, overall brightness and contrast decreased, although both style images have bright regions similar to the content images, i.e. clouds, small light sources. 
 
 In summary, style based tone mapping differs from the previous methods by means of learning different tone mapping styles from a small set of tone mapped calibration images. Then, new HDR images, which may be created from vastly different scenes, can be tone mapped according to these learnt styles. In this sense, style based tone mapping is the first method that allows to batch process a set of HDR images consistently according to the created style.
 
